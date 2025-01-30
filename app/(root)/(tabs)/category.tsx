@@ -36,10 +36,10 @@ const Category = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [updatedCategory, setUpdatedCategory] = useState(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null); // Store ID of selected item
 
   useEffect(() => {
     const searchQuery = String(searchedItem || "").toLowerCase(); // Ensure searchedItem is a string
-  
     const filtered = sampleItem.filter((item) => {
       const name = String(item.name || "").toLowerCase(); // Ensure item.name is a string
       return name.includes(searchQuery);
@@ -54,7 +54,7 @@ const Category = () => {
 
   const handleDelete = (id: number) => {
     setDeleteModalVisible(true);
-    console.log("Delete item with ID:", id);
+    setSelectedId(id); // Store ID in state
     // Add your delete logic here
   };
 
@@ -82,7 +82,13 @@ const Category = () => {
     </View>
   ));
 
-  
+  const handleModalClose = (deleteConfirmed: boolean) => {
+    setDeleteModalVisible(false); // Close modal
+
+    if (deleteConfirmed && selectedId !== null) {  
+      console.log("Item deleted!", selectedId); // Perform delete action here
+    }
+  };
 
   return (
     <SafeAreaView className="bg-white h-full">
@@ -138,7 +144,7 @@ const Category = () => {
       />
     <DeleteModal 
     visible={isDeleteModalVisible}
-    onClose={() => setDeleteModalVisible(false)}
+    onClose={handleModalClose}
     />
     </SafeAreaView>
   );

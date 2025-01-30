@@ -5,7 +5,6 @@ import {Card, FeaturedCard} from '@/components/Card'
 import { UIActivityIndicator } from 'react-native-indicators'
 import NoResults from '@/components/NoResults'
 import Search from '@/components/Search'
-import { useDebouncedCallback } from 'use-debounce';
 import { router, useLocalSearchParams } from 'expo-router'
 import Filters from '@/components/Filters'
 import icons from '@/constants/icons'
@@ -17,6 +16,7 @@ const Product = () => {
   const [modalVisible, setModalVisible] = useState(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [updatedProduct, setUpdatedProduct] = useState(null);
+    const [selectedId, setSelectedId] = useState<number | null>(null); // Store ID of selected item
   
     const loading = false
     const isAdmin = true
@@ -43,8 +43,7 @@ const Product = () => {
 
       const handleDelete = (id: number) => {
         setDeleteModalVisible(true);
-        console.log("Delete item with ID:", id);
-        // Add your delete logic here
+        setSelectedId(id); // Store ID in state
       };
     
       // Function to handle update action
@@ -72,6 +71,13 @@ const Product = () => {
       </View>
     ));
 
+    const handleModalClose = (deleteConfirmed: boolean) => {
+      setDeleteModalVisible(false); // Close modal
+  
+      if (deleteConfirmed && selectedId !== null) {  
+        console.log("Item deleted!", selectedId); // Perform delete action here
+      }
+    };
   return (
       <SafeAreaView className='bg-white h-full'>
           <View className='px-4 py-2 flex flex-row  items-center justify-between'>
@@ -128,7 +134,7 @@ const Product = () => {
         />
         <DeleteModal 
           visible={isDeleteModalVisible}
-          onClose={() => setDeleteModalVisible(false)}
+          onClose={handleModalClose}
         />
     </SafeAreaView>
   )

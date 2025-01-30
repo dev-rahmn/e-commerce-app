@@ -36,7 +36,8 @@ import product from "@/assets/icons/product.png";
 import order from "@/assets/icons/order.png";
 import myOrders from "@/assets/icons/myOrders.png";
 import deleteLogo from '@/assets/icons/deleteIcon.png';
-import editLogo from '@/assets/icons/editProperty.png'
+import editLogo from '@/assets/icons/editProperty.png';
+import addImage from '@/assets/icons/addImage.png';
 export default {
   google,
   home,
@@ -77,4 +78,5 @@ export default {
   myOrders,
   deleteLogo,
   editLogo,
+  addImage
 };

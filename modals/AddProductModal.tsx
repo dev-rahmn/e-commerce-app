@@ -102,14 +102,12 @@ const AddProductModal = ({ visible, onClose } : any) => {
               onChangeText={setDescription}
             />
             <View className=' items-center border border-gray-300 rounded-lg mb-3'>
-
-           
             <TouchableOpacity
               className=" flex flex-row items-center justify-between w-full px-2"
               onPress={pickImage}
             >
                <Text className=" text-black font-rubik-medium ">Select Images for product</Text>
-              <Image source={icons.edit} className="w-10 h-10 border rounded-full" />
+              <Image source={icons.addImage} className="w-10 h-10 mb-2" />
             </TouchableOpacity>
             </View>
             {productImages.length > 0 && (
