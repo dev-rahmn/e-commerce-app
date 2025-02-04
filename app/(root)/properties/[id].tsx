@@ -138,7 +138,8 @@ const Property = () => {
             </Text>
           </View>
 
-          <TouchableOpacity className="flex-1 flex flex-row items-center justify-center bg-primary-300 py-3 rounded-full shadow-md shadow-zinc-400">
+          <TouchableOpacity className="flex-1 flex flex-row items-center justify-center bg-primary-300 py-3 rounded-full shadow-md shadow-zinc-400"
+          onPress={() => router.push('/orderSummery')}>
             <Text className="text-white text-lg text-center font-rubik-bold">
               Buy Now
             </Text>

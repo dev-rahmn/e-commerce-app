@@ -8,7 +8,7 @@ import whiteGradient from "@/assets/images/white-gradient.png";
 import map from "@/assets/images/map.png";
 import noResult from "@/assets/images/no-result.png";
 import home from "@/assets/images/home.png";
-
+import CategoryImg from "@/assets/images/categoryImage.png";
 export default {
   onboarding,
   avatar,
@@ -18,5 +18,7 @@ export default {
   barChart,
   whiteGradient,
   map,
-  noResult,home
+  noResult,
+  home,
+  CategoryImg,
 };

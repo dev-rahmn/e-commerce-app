@@ -51,7 +51,7 @@ const ManageCategoryModal = ({ visible, onClose, category } : any) => {
             
             <TouchableOpacity onPress={hadleAdd} 
             className="bg-green-700 py-2 px-5 rounded-lg">
-              <Text className="text-white">Add</Text>
+              <Text className="text-white">{category ? 'Update' : 'Add'}</Text>
             </TouchableOpacity>
           </View>
           </ScrollView>

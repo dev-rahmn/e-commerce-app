@@ -101,7 +101,7 @@ const Category = () => {
         </TouchableOpacity>
 
         <Text className="text-xl font-rubik-medium text-black-300 mt-2">
-          {isAdmin ? "Category Management" : "Category"}
+          {isAdmin ? "Category Management" : "Category List"}
         </Text>
 
         {isAdmin && (

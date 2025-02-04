@@ -143,7 +143,7 @@ export const CategoryCard = ({ item, adminActions  }: CategoryProps) => {
       <View className="flex flex-row items-center justify-between mt-2">
         {/* First View: Image */}
         <View className="flex flex-row items-center">
-          <Image source={images.newYork} className="w-16 h-16 rounded-lg" />
+          <Image source={images.CategoryImg} className="w-16 h-16 rounded-lg" />
         </View>
 
         {/* Second View: Name, Price, and Status */}
