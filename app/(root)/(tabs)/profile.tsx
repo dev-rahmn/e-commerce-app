@@ -39,6 +39,7 @@ import { router } from "expo-router";
 
   const Profile = () => {     
   
+  let isAdmin = true
   const handleLogout = async () => {
     console.log("clicked")
     
@@ -46,11 +47,13 @@ import { router } from "expo-router";
   
   const myOrderHandler = () =>{
     router.push(`/order`)
-
+  }
+  const myAddressHandler = () =>{
+    router.push(`/address`)
   }
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className={`h-full ${isAdmin ? 'bg-green-300' : 'bg-white'} `}>
       <ScrollView
         showsHorizontalScrollIndicator={false}
         contentContainerClassName="pb-32 px-7"
@@ -80,6 +83,7 @@ import { router } from "expo-router";
         </View>
         <View className="flex flex-col mt-5">
           <Settingitem title='My Orders' icon={icons.myOrders} showArrow onPress={myOrderHandler}/>
+          <Settingitem title='My Addresses' icon={icons.address} showArrow onPress={myAddressHandler}/>
           <Settingitem title='Payments' icon={icons.wallet} showArrow/>
           
         </View>

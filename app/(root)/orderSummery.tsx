@@ -1,27 +1,29 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
+import { addAddress, selectAddress, updateAddress } from "@/redux/slices/addressSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, SafeAreaView, ScrollView, Animated } from "react-native";
 
 const OrderSummary = () => {
-   
+  const dispatch =  useAppDispatch()
   const [step, setStep] = useState(1); // Track current step
-  const [selectedAddress, setSelectedAddress] = useState< | {
-      id: number;
-      name: string;
-      phone: string;
-      pincode: string;
-      state: string;
-      city: string;
-      buildingName: string;
-      roadName: string;
-      type: string;
-    }| undefined>(undefined);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
+  interface Address {
+    id: number;
+    name: string;
+    phone: string;
+    pincode: string;
+    state: string;
+    city: string;
+    buildingName: string;
+    roadName: string;
+    type: string; // Use enum here
+  }
   const [isAddingAddress, setIsAddingAddress] = useState(false);
 
-  const [selectedAddressId, setSelectedAddressId] = useState<number>(2);
 
 // Step 1: Personal Information
 const [name, setName] = useState("");
@@ -36,92 +38,23 @@ const [roadName, setRoadName] = useState("");
 // Step 4: type
   const [selectedType, setSelectedType] = useState('home');
 
+  const addresses = useAppSelector(state => state.address.addresses);
+  const selectedDeliveryAddress = useAppSelector(state => state.address.selectedDeliveryAddress);
+
   const steps = ["Address", "Order Summary", "Payment"]; 
 
   const orderItems = [
     { id: 1, name: "Adidas Men's Shoes", price: "₹2,650", image: "https://via.placeholder.com/150" }
   ];
 
-
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      name: "Atiqur Rahman",
-      phone: "8840362901",
-      pincode: "201301",
-      state: "Noida",
-      city: "Noida",
-      buildingName: "Infinity Business Tower",
-      roadName: "Puncture Shop, Wazidpur",
-      type: "work",
-    },
-    {
-      id: 2,
-      name: "Atiqur Rahman",
-      phone: "8840362901",
-      pincode: "110001",
-      state: "Delhi",
-      city: "New Delhi",
-      buildingName: "Connaught Place Business Hub",
-      roadName: "Outer Circle, CP",
-      type: "work",
-    },
-    {
-      id: 3,
-      name: "Atiqur Rahman",
-      phone: "8840362901",
-      pincode: "201005",
-      state: "Uttar Pradesh",
-      city: "Ghaziabad",
-      buildingName: "Shipra Mall Tower",
-      roadName: "Indirapuram, Ghaziabad",
-      type: "home",
-    },
-    {
-      id: 4,
-      name: "Atiqur Rahman",
-      phone: "8840362901",
-      pincode: "122018",
-      state: "Haryana",
-      city: "Gurgaon",
-      buildingName: "Cyber City Tower",
-      roadName: "DLF Phase 3",
-      type: "work",
-    },
-    {
-      id: 5,
-      name: "Atiqur Rahman",
-      phone: "8840362901",
-      pincode: "400001",
-      state: "Maharashtra",
-      city: "Mumbai",
-      buildingName: "Nariman Point Plaza",
-      roadName: "Marine Drive",
-      type: "work",
-    },
-    {
-      id: 6,
-      name: "Atiqur Rahman",
-      phone: "8840362901",
-      pincode: "560001",
-      state: "Karnataka",
-      city: "Bangalore",
-      buildingName: "Brigade Gateway",
-      roadName: "Malleswaram, Bangalore",
-      type: "work",
-    },
-  ]);
   
-  const addressSelectionHandler = (id : number) =>{
-    setSelectedAddressId(id); 
-    getSelectedAddress(id)
+  const addressSelectionHandler = (item : any) =>{
+    // dispatch(selectAddress(id));
+    setSelectedAddress(item)
   }
-const getSelectedAddress = (id : number) => {
-  const selectedAddress = addresses.find((address) => address.id === id);
- setSelectedAddress(selectedAddress);
-}
+
   const handleAddressSelection = () => {
- 
+        dispatch(selectAddress(selectedAddress));
     if (selectedAddress) {
       
       setStep(2);
@@ -130,9 +63,8 @@ const getSelectedAddress = (id : number) => {
     }
   };
   
-  useEffect(() => {
-      getSelectedAddress(selectedAddressId);
-      
+  useEffect(() => {  
+
       if(selectedAddress){
         setStep(2)
       }
@@ -183,16 +115,16 @@ const getSelectedAddress = (id : number) => {
   }
   const handleManageAddress = () =>{
 
-        if (!name.trim()) return alert("Full Name is required");
-        if (!phone.trim() || phone.length !== 10) return alert("Enter a valid 10-digit phone number");
-        if (!pincode.trim() || pincode.length !== 6) return alert("Enter a valid 6-digit pincode");
-        if (!state.trim()) return alert("State is required");
-        if (!city.trim()) return alert("City is required");
-        if (!buildingName.trim()) return alert("Building Name is required");
-        if (!roadName.trim()) return alert("Road Name is required");
+        // if (!name.trim()) return alert("Full Name is required");
+        // if (!phone.trim() || phone.length !== 10) return alert("Enter a valid 10-digit phone number");
+        // if (!pincode.trim() || pincode.length !== 6) return alert("Enter a valid 6-digit pincode");
+        // if (!state.trim()) return alert("State is required");
+        // if (!city.trim()) return alert("City is required");
+        // if (!buildingName.trim()) return alert("Building Name is required");
+        // if (!roadName.trim()) return alert("Road Name is required");
 
     const newAddress = {
-        id: Date.now(), // Unique ID using timestamp
+        
         name,
         phone,
         pincode,
@@ -203,7 +135,21 @@ const getSelectedAddress = (id : number) => {
         type: selectedType,
       };
     
-      setAddresses((prev : any) => [...prev, newAddress]);
+      if(selectedAddress?.id){
+
+        let data = { id: selectedAddress. id,...newAddress}
+        dispatch(updateAddress(data))
+        
+        setSelectedAddress(data)
+        console.log('update');
+
+      }else{
+        dispatch(addAddress({
+          ...newAddress,id: Date.now()
+        }))
+        console.log('add');
+      }
+    
     
       resetFields(); 
       setIsAddingAddress(false)
@@ -213,10 +159,10 @@ const getSelectedAddress = (id : number) => {
       <View className="flex-1 py-2">
         
         {step === 1 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
-            <TouchableOpacity onPress={() => setStep(2)} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
+            <TouchableOpacity onPress={() => {setStep(2), setIsAddingAddress(false)}} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
               <Image source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
-            <Text className="text-xl font-rubik-base text-black-300 mt-2">Address</Text>  
+            <Text className="text-xl font-rubik-base text-black-300 mt-2">Address - {`(${addresses.length})`}</Text>  
         </View>)}
         {step === 2 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
             <TouchableOpacity onPress={() => router.back()} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
@@ -272,13 +218,13 @@ const getSelectedAddress = (id : number) => {
                 renderItem={({ item }) => (
                     <TouchableOpacity
                     className={`border border-gray-200 rounded-lg my-2`}
-                    onPress={() => addressSelectionHandler(item.id)}
+                    onPress={() => addressSelectionHandler(item)}
                     >
 
-                    <View className={`bg-white p-2 rounded-lg shadow py-4 ${selectedAddressId === item.id ? "border border-primary-300" : ""}`}>
+                    <View className={`bg-white p-2 rounded-lg shadow py-4 ${selectedAddress?.id === item.id ? "border border-primary-300" : ""}`}>
                         <View className="flex-row items-center">
                             {/* Name */}
-                            <Text className={`text-lg font-semibold ${selectedAddressId === item.id ? "text-blue-600" : "text-black"}`}>
+                            <Text className={`text-lg font-semibold ${selectedAddress?.id === item.id ? "text-blue-600" : "text-black"}`}>
                             {item.name}
                             </Text>
             
@@ -288,7 +234,7 @@ const getSelectedAddress = (id : number) => {
                             </View>
             
                             {/* Edit Button */}
-                            {selectedAddressId === item.id && (
+                            {selectedAddress?.id === item.id && (
                                 <TouchableOpacity className="ml-auto flex-row items-center bg-primary-300 px-4 py-1 rounded-lg border border-gray-300" 
                                 onPress={() =>editAddressHandler(item)}
                                 >
@@ -306,7 +252,8 @@ const getSelectedAddress = (id : number) => {
                     </TouchableOpacity>
                     )}
                     ListHeaderComponent={
-                        <TouchableOpacity className="py-3 px-6 rounded-lg flex-1 items-center justify-center bg-primary-300"  onPress={() => setIsAddingAddress(true)}>
+                        <TouchableOpacity className="py-3 px-6 rounded-lg flex-1 items-center justify-center bg-primary-300"
+                          onPress={() =>{ setIsAddingAddress(true), setSelectedAddress(null)}}>
                         <Text className="text-white text-lg font-rubik-semibold">+ Add new address</Text>
                     </TouchableOpacity>
                     }
@@ -433,15 +380,15 @@ const getSelectedAddress = (id : number) => {
                     </View>
                     <View className="flex-row items-start gap-2">
 
-                    <Text className="text-gray-700 font-rubik-medium">{selectedAddress?.name}</Text>
+                    <Text className="text-gray-700 font-rubik-medium">{selectedDeliveryAddress?.name}</Text>
                     <View className="ml-2 px-2 py-1 bg-gray-200 rounded-lg">
-                            <Text className="text-sm text-gray-700">{selectedAddress?.type.toUpperCase()}</Text>
+                            <Text className="text-sm text-gray-700">{selectedDeliveryAddress?.type.toUpperCase()}</Text>
                             </View>
                     </View>
                     <Text className="text-gray-500">
-                    {selectedAddress?.buildingName}, {selectedAddress?.roadName}, {selectedAddress?.state},{selectedAddress?.city},{selectedAddress?.pincode}
+                    {selectedDeliveryAddress?.buildingName}, {selectedDeliveryAddress?.roadName}, {selectedDeliveryAddress?.state},{selectedDeliveryAddress?.city},{selectedDeliveryAddress?.pincode}
                     </Text>
-                    <Text className="text-gray-700 font-bold">{selectedAddress?.phone}</Text>
+                    <Text className="text-gray-700 font-bold">{selectedDeliveryAddress?.phone}</Text>
                 </View>
 
                 {/* Product Card */}
@@ -527,7 +474,7 @@ const getSelectedAddress = (id : number) => {
           </TouchableOpacity>
         )}
         {(step === 1 && !isAddingAddress) && (
-          <TouchableOpacity className="bg-orange-500 py-3 px-6 rounded-full flex-1" onPress={handleAddressSelection} disabled={!selectedAddressId}>
+          <TouchableOpacity className="bg-orange-500 py-3 px-6 rounded-full flex-1" onPress={handleAddressSelection} disabled={!selectedAddress}>
           <Text className="text-white text-center text-lg font-bold">DELIVER HERE</Text>
         </TouchableOpacity>
         )}

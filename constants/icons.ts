@@ -39,6 +39,7 @@ import deleteLogo from '@/assets/icons/deleteIcon.png';
 import editLogo from '@/assets/icons/editProperty.png';
 import addImage from '@/assets/icons/addImage.png';
 import work from "@/assets/icons/work.png";
+import address from "@/assets/icons/addressBook.png";
 export default {
   google,
   home,
@@ -80,5 +81,6 @@ export default {
   deleteLogo,
   editLogo,
   addImage,
-  work
+  work,
+  address
 };

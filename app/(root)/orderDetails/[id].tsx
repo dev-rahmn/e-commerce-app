@@ -87,7 +87,7 @@ const OrderDetails = () => {
                   className="h-10 w-10 z-10 rounded-full border-4 flex items-center justify-center"
                 >
                   <Text className="text-white font-bold z-5">
-                    {step.completed ? '✔' : step.id}
+                    {step.completed ? '🚚' : step.id}
                   </Text>
                 </Animated.View>
 
