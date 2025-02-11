@@ -87,7 +87,7 @@ const OrderDetails = () => {
                   className="h-10 w-10 z-10 rounded-full border-4 flex items-center justify-center"
                 >
                   <Text className="text-white font-bold z-5">
-                    {step.completed ? '🚚' : step.id}
+                    {step.completed ? '✓' : step.id}
                   </Text>
                 </Animated.View>
 
@@ -118,7 +118,8 @@ const OrderDetails = () => {
       </ScrollView>
 
       {/* Action Buttons */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white p-5 flex flex-row justify-between border-t border-gray-300">
+      <View className="absolute bottom-0 left-0 right-0 bg-white p-2 flex flex-row justify-between border-t border-gray-300">
+        
         <TouchableOpacity className="bg-green-500 py-3 px-6 rounded-full flex-1 mr-2">
           <Text className="text-white text-center font-semibold text-lg">Accept</Text>
         </TouchableOpacity>

@@ -39,7 +39,7 @@ import { router } from "expo-router";
 
   const Profile = () => {     
   
-  let isAdmin = true
+  let isAdmin = false
   const handleLogout = async () => {
     console.log("clicked")
     
@@ -68,9 +68,9 @@ import { router } from "expo-router";
               source={images.avatar}
               className="size-44 relative rounded-full"
             />
-            <View className="absolute top-[-15] right-[-20] px-4 py-2 bg-primary-200 rounded-lg">
+            <View className={`absolute top-[-15] right-[-20] px-4 py-2  rounded-lg ${isAdmin ? 'bg-white' : 'bg-green-300'}`}>
 
-              <Text className="text-sm font-rubik-medium uppercase">user </Text>
+              <Text className="text-sm font-rubik-medium uppercase">{isAdmin ? 'admin' : 'user'}</Text>
             </View>
             <TouchableOpacity className="absolute bottom-11 right-2">
               <Image source={icons.edit} className="size-9" />
@@ -83,7 +83,9 @@ import { router } from "expo-router";
         </View>
         <View className="flex flex-col mt-5">
           <Settingitem title='My Orders' icon={icons.myOrders} showArrow onPress={myOrderHandler}/>
-          <Settingitem title='My Addresses' icon={icons.address} showArrow onPress={myAddressHandler}/>
+
+          {!isAdmin && <Settingitem title='My Addresses' icon={icons.address} showArrow onPress={myAddressHandler}/>}
+
           <Settingitem title='Payments' icon={icons.wallet} showArrow/>
           
         </View>
