@@ -1,6 +1,5 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
-import { selectAddress } from "@/redux/slices/addressSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -8,10 +7,9 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, Image, SafeAreaView,
 import ManageAddress from "./manageAddress";
 
 const OrderSummary = () => {
-  const dispatch =  useAppDispatch()
-  const [step, setStep] = useState(1); // Track current step
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
+  const [step, setStep] = useState(1); // Track current step
+ 
   interface Address {
     id: number;
     name: string;
@@ -23,57 +21,19 @@ const OrderSummary = () => {
     roadName: string;
     type: string; // Use enum here
   }
-  const [isAddingAddress, setIsAddingAddress] = useState(false);
-
-
-// Step 1: Personal Information
-const [name, setName] = useState("");
-const [phone, setPhone] = useState("");
-// Step 2: Location Details
-const [pincode, setPincode] = useState("");
-const [state, setState] = useState("");
-const [city, setCity] = useState("");
-// Step 3: Address Details
-const [buildingName, setBuildingName] = useState("");
-const [roadName, setRoadName] = useState("");
-// Step 4: type
-  const [selectedType, setSelectedType] = useState('home');
-
-  const addresses = useAppSelector(state => state.address.addresses);
-  const selectedDeliveryAddress = useAppSelector(state => state.address.selectedDeliveryAddress);
-
+ 
+  const {data,loading, error} = useAppSelector(state => state.address.selectedDeliveryAddress);
+   const selectedDeliveryAddress = data
   const steps = ["Address", "Order Summary", "Payment"]; 
 
-  const orderItems = [
-    { id: 1, name: "Adidas Men's Shoes", price: "₹2,650", image: "https://via.placeholder.com/150" }
-  ];
-
-  
-  const addressSelectionHandler = (item : any) =>{
-    // dispatch(selectAddress(id));
-    setSelectedAddress(item)
-  }
-
-  const handleAddressSelection = () => {
-        dispatch(selectAddress(selectedAddress));
-    if (selectedAddress) {
-      
-      setStep(2);
-    } else {
-      console.warn("No address found for the given ID");
-    }
-  };
-  
   useEffect(() => {  
+    if(!data)  {
+      setStep(1)
+    }else{
 
-      if(selectedAddress){
-        setStep(2)
-      }
-  },[]);
-
-  useEffect(() => {    
       setStep(2) 
-},[]);
+    }
+},[data]);
 
   const handleNextStep = () => {
     if (step < 3) setStep(step + 1);
@@ -88,39 +48,16 @@ const [roadName, setRoadName] = useState("");
     console.log('place order');
   }
 
-  const editAddressHandler =(item : any) =>{
-    setName(item.name);
-    setPhone(item.phone);
-    setPincode(item.pincode);
-    setState(item.state);
-    setCity(item.city);
-    setBuildingName(item.buildingName);
-    setRoadName(item.roadName);
-    setSelectedType(item.type);
-
-    setIsAddingAddress(true);
-  }
-
-  const resetFields = () => {
-    setName("");
-    setPhone("");
-    setPincode("");
-    setState("");
-    setCity("");
-    setBuildingName("");
-    setRoadName("");
-    setSelectedType("home");
-  };
   const handleAddressChange = () => {
         setStep(1);
   }
  
   return (
     <SafeAreaView className="bg-white h-full">
-      <View className="flex-1 py-2">
+      <View className="flex-1 ">
         
         {step === 1 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
-            <TouchableOpacity onPress={() => {setStep(2), setIsAddingAddress(false)}} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
+            <TouchableOpacity onPress={() => {setStep(2)}} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
               <Image source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
             <Text className="text-xl font-rubik-base text-black-300 mt-2">Address </Text>  
@@ -170,7 +107,7 @@ const [roadName, setRoadName] = useState("");
         <View >   
           {/* Step 1: Address Input */}
           {step === 1 && (
-           <View className=" pb-24">
+           <View className="pb-24">
              <View>
               <ManageAddress showAddAction={true} onDeliverHandler={() => setStep(2)} />
             </View> 

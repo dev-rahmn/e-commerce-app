@@ -6,11 +6,13 @@ import ManageAddress from "@/app/(root)/manageAddress";
 import { useAppSelector } from "@/redux/store/hooks";
 
 const DeliveryLocation = () => {
-  const selectedDeliveryAddress = useAppSelector(
+  // Destructure the selectedDeliveryAddress state: data, loading, and error.
+  const { data, loading, error } = useAppSelector(
     (state) => state.address.selectedDeliveryAddress
   );
+  const selectedDeliveryAddress = data;
   
-  // Create a ref for BottomDrawer
+  // Create a ref for BottomDrawer.
   const drawerRef = useRef<BottomDrawerRef>(null);
 
   const onDeliverHandler = () => {
@@ -19,9 +21,26 @@ const DeliveryLocation = () => {
     }
   };
 
-  // Header component: show address details if available; otherwise, prompt to add an address.
+  // Header component: Display a message if loading or error, else show address details or a prompt.
   const Header = () => {
-    // Use a type guard to check for properties on selectedDeliveryAddress.
+    if (loading) {
+      return (
+        <View className="py-2 rounded-lg flex-row items-center justify-center mt-2 border border-dashed border-gray-300">
+          <Text className="text-base text-black font-rubik-light">
+            Location is updating...
+          </Text>
+        </View>
+      );
+    }
+    if (error) {
+      return (
+        <View className="py-2 rounded-lg flex-row items-center justify-center mt-2 border border-dashed border-gray-300">
+          <Text className="text-base text-red-600 font-rubik-light">
+            {error}
+          </Text>
+        </View>
+      );
+    }
     if (selectedDeliveryAddress && "buildingName" in selectedDeliveryAddress) {
       const { buildingName, roadName, type } = selectedDeliveryAddress;
       return (
@@ -47,27 +66,14 @@ const DeliveryLocation = () => {
         </View>
       );
     } else {
-      // If no address exists, show a view prompting the user to add an address.
-      return (
-        <TouchableOpacity
-          className="py-2 rounded-lg items-center justify-center mt-2 border border-dashed border-gray-300"
-          onPress={() => {
-            // Optionally, you can open the drawer or navigate to the add address screen.
-            // For example: drawerRef.current?.open();
-          }}
-        >
-          <Text className="text-base text-black font-rubik-light">
-            No address selected
-          </Text>
-        </TouchableOpacity>
-      );
+      null
     }
   };
 
   return (
     <BottomDrawer ref={drawerRef} header={<Header />}>
       <ManageAddress
-        // Optionally, you can pass a prop that shows add action when there’s no address.
+        // If no address is selected, show the add action.
         showAddAction={!selectedDeliveryAddress}
         disableScroll={true}
         onDeliverHandler={onDeliverHandler}

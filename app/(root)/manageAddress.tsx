@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 import icons from '@/constants/icons'
 import ManageAddressList from '@/components/ManageAddressList'
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
-import {  getAllAddresses, manageAddress, selectAddress } from "@/redux/slices/addressSlice";
+import {  getAllAddresses, manageAddress, updateSelectedDeliveryAddressAsync } from "@/redux/slices/addressSlice";
 import ManageAddressForm from '@/components/ManageAddressForm'
 
 interface AddressProps {
@@ -17,16 +17,8 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
    
      const dispatch =  useAppDispatch()
     const [isAddingAddress, setIsAddingAddress] = useState(false);
-    const [address, setAddress] = useState(null);
+    const [address, setAddress] = useState<any | null>(null);
     const profile = useAppSelector((state) => state.auth.userProfile);
-/*************  ✨ Codeium Command ⭐  *************/
-  /**
-   * Handles the logic of adding or updating an address. If the add/update is
-   * successful, it refreshes the address list and resets the local state.
-   * @param {object} address - The address to be added or updated
-   * @returns {Promise<void>}
-   */
-/******  1080f8ac-384c-439d-a951-6faebe647278  *******/
 
     const manageAddressHandler = async (address: any) => {
         if (profile) {
@@ -50,10 +42,24 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
       };
       
 
-    const updateDeliveryAddressHandler = ( ) => { //button for deleiver here
-        dispatch(selectAddress(address))
-        onDeliverHandler()
+   // This handler updates the selected delivery address.
+   const updateDeliveryAddressHandler = async() => {
+    if (!address || !profile?.userId) {
+      console.error('Address or profile userId is not available');
+      return;
     }
+    const response = await dispatch(
+      updateSelectedDeliveryAddressAsync({
+        selectedAddressId: address.id,
+        userId: profile.userId,
+      })
+    );
+    if(response){
+      
+      onDeliverHandler();
+    }
+  };
+
 
    const getSelectedAddress = (address : any) =>{
         setAddress(address)
@@ -85,8 +91,6 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
              onPress={updateDeliveryAddressHandler}>
                 <Text className="text-white text-center text-lg font-bold">DELIVER HERE</Text>
             </TouchableOpacity>
-           
-            
             </View>
            )}        
         </View>

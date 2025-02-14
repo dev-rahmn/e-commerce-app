@@ -12,7 +12,6 @@ const ManageCategoryModal = ({ visible, onClose, category } : any) => {
   };
 
   useEffect(() =>{
-    console.log('category', category)
     if(category && category.id){
 
         setName(category.name)

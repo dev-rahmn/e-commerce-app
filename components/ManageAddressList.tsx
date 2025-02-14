@@ -27,7 +27,7 @@ const ManageAddressList = (
       const profile = useAppSelector(state => state.auth.userProfile);
       const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
       const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-      const [activeMenu, setActiveMenu] = useState<number | null>(null);
+      const [activeMenu, setActiveMenu] = useState<any | null>(null);
       const [selectedId, setSelectedId] = useState<number | null>(null); // Store ID of selected item
      const [reFetch, setReFetch] = useState(false);
     const editAddressHandler =() =>{
@@ -80,10 +80,10 @@ const ManageAddressList = (
                 onPress={() => addressSelectionHandler(item)}
                 >
 
-                <View className={`bg-white p-2 rounded-lg shadow py-4 ${selectedAddress?.id === item.id ? "border border-primary-300" : ""}`}>
+                <View className={`bg-white p-2 rounded-lg shadow py-4 ${  selectedAddress?.id.toString() === item.id ? "border border-primary-300" : ""}`}>
                     <View className="flex-row pb-3 items-center">
                         {/* Name */}
-                        <Text className={`text-lg font-semibold ${selectedAddress?.id === item.id ? "text-blue-600" : "text-black"}`}>
+                        <Text className={`text-lg font-semibold ${  selectedAddress?.id.toString() === item.id ? "text-blue-600" : "text-black"}`}>
                         {item.name}
                         </Text>
         
@@ -93,7 +93,7 @@ const ManageAddressList = (
                         </View>
         
                         {/* 3-Dot Menu Button */}
-                            {selectedAddress?.id === item.id && showAction && (
+                            {  selectedAddress?.id.toString() === item.id && showAction && (
                             <TouchableOpacity
                                 onPress={() =>
                                 setActiveMenu(activeMenu === item.id ? null : item.id)
