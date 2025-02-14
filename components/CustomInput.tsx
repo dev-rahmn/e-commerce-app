@@ -3,15 +3,16 @@ import React from 'react'
 
 interface CustomInputProps extends TextInputProps {
   label?: string;
+  labelColor?: string;
   error?: string;
 }
 
-const CustomInput = ({ label, error, ...props }: CustomInputProps) => {
+const CustomInput = ({ label, labelColor, error, ...props }: CustomInputProps) => {
   return (
     <View className="mb-4">
-      { label && <Text className="text-black font-rubik-medium mb-2">{label}</Text>}
+      { label && <Text className={`${labelColor ? `text-${labelColor}` : 'text-black'} font-rubik-medium mb-2`}>{label}</Text>}
       <TextInput 
-        className={`bg-white/50 backdrop-blur-md rounded-xl px-4 py-3 text-black font-rubik
+        className={`bg-white/50 backdrop-blur-md rounded-xl px-4 py-3 ${labelColor ? `text-${labelColor}` : 'text-black'} font-rubik
           ${error ? 'border-2 border-red-500' : ''}`}
         placeholderTextColor="primary-100"
         {...props}

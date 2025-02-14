@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 import icons from '@/constants/icons'
 import ManageAddressList from '@/components/ManageAddressList'
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
-import { addAddress, selectAddress, updateAddress } from "@/redux/slices/addressSlice";
+import {  getAllAddresses, manageAddress, selectAddress } from "@/redux/slices/addressSlice";
 import ManageAddressForm from '@/components/ManageAddressForm'
 
 interface AddressProps {
@@ -18,19 +18,37 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
      const dispatch =  useAppDispatch()
     const [isAddingAddress, setIsAddingAddress] = useState(false);
     const [address, setAddress] = useState(null);
-    const manageAddressHandler = (address : any) => {
-    // console.log("address",address) 
-    if(address.id  != null){
-        console.log('update',address)
-        dispatch(updateAddress(address))
-    }else{
-        const data = { ...address, id: Date.now() }; // ✅ Fix applied
-       dispatch(addAddress(data))   
-    }
+    const profile = useAppSelector((state) => state.auth.userProfile);
+/*************  ✨ Codeium Command ⭐  *************/
+  /**
+   * Handles the logic of adding or updating an address. If the add/update is
+   * successful, it refreshes the address list and resets the local state.
+   * @param {object} address - The address to be added or updated
+   * @returns {Promise<void>}
+   */
+/******  1080f8ac-384c-439d-a951-6faebe647278  *******/
 
-    setAddress(null)
-    setIsAddingAddress(false)
-    }
+    const manageAddressHandler = async (address: any) => {
+        if (profile) {
+          try {
+            const res = await dispatch(
+              manageAddress({ address, userId: profile.userId })
+            ).unwrap();
+      
+            if (res) {
+              // Refresh the address list after a successful add/update.
+              dispatch(getAllAddresses(profile.userId));
+              // Reset local state.
+              setAddress(null);
+              setIsAddingAddress(false);
+            }
+          } catch (error) {
+            // Handle the error: you might want to show a notification or log the error.
+            console.error("Failed to manage address:", error);
+          }
+        }
+      };
+      
 
     const updateDeliveryAddressHandler = ( ) => { //button for deleiver here
         dispatch(selectAddress(address))

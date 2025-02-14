@@ -7,12 +7,17 @@ import {
   ImageSourcePropType,
   Alert,
 } from "react-native";
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
 import { settings } from "@/constants/data";
 import { router } from "expo-router";
+import ConfirmationDialog from "@/components/ConfirmationDialog";
+import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
+import { clearCredentials } from "@/redux/slices/authSlice";
+import { isAdminUser } from "@/constants/utils";
+import { persistor } from "@/redux/store/store";
 
   interface SettingItemProps {
     title: string;
@@ -38,25 +43,30 @@ import { router } from "expo-router";
               )
 
   const Profile = () => {     
-  
-  let isAdmin = false
-  const handleLogout = async () => {
-    console.log("clicked")
-    
+    const dispatch = useAppDispatch();
+    const profile = useAppSelector((state) => state.auth.userProfile);
+    const token = useAppSelector((state) => state.auth.token);
+    const isAdmin = useMemo(() => isAdminUser(token), [token]);
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+ 
+  const handleResult = async (result: boolean) => {
+    setModalVisible(false); // Add your additional logic here based on the result.
+     
+    if(result){ // For example, if (result) { // confirmed action } else { // cancelled }
+    dispatch(clearCredentials())
+    // Optionally purge the persisted storage.
+    persistor.purge();
+    }
   };
   
-  const myOrderHandler = () =>{
-    router.push(`/order`)
-  }
-  const myAddressHandler = () =>{
-    router.push(`/address`)
-  }
 
   return (
     <SafeAreaView className={`h-full ${isAdmin ? 'bg-green-300' : 'bg-white'} `}>
       <ScrollView
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName="pb-32 px-7"
+        contentContainerClassName="pb-24 px-7"
       >
         <View className="flex flex-row items-center justify-between mt-5">
           <Text className="text-xl font-rubik-bold">Profile</Text>
@@ -77,19 +87,19 @@ import { router } from "expo-router";
             </TouchableOpacity>
 
             <Text className="text-2xl font-rubik-bold mt-2">
-              Atiqur | Rahman
+             {profile?.fullName}
             </Text>
           </View>
         </View>
-        <View className="flex flex-col mt-5">
-          <Settingitem title='My Orders' icon={icons.myOrders} showArrow onPress={myOrderHandler}/>
+        <View className="flex flex-col mt-2">
+          <Settingitem title='My Orders' icon={icons.myOrders} showArrow onPress={() =>router.push(`/order`)}/>
 
-          {!isAdmin && <Settingitem title='My Addresses' icon={icons.address} showArrow onPress={myAddressHandler}/>}
+          {!isAdmin && <Settingitem title='My Addresses' icon={icons.address} showArrow onPress={() =>router.push(`/address`)}/>}
 
           <Settingitem title='Payments' icon={icons.wallet} showArrow/>
           
         </View>
-        <View className="flex flex-col mt-5 border-t border-gray-200 pt-5">
+        <View className="flex flex-col mt-2 border-t border-gray-200 pt-5">
           {settings.slice(2).map((item, index) => (
             <Settingitem key={index}
               {...item}
@@ -97,12 +107,19 @@ import { router } from "expo-router";
             />
           ))}
         </View>
-        <View className="flex flex-col mt-5 border-t border-primary-200 pt-2">
+        <View className="flex flex-col mt-3 border-t border-primary-200 pt-2">
          
-            <Settingitem icon={icons.logout} title='Logout' onPress={handleLogout} textStyle="text-danger"/>
+            <Settingitem icon={icons.logout} title='Logout' onPress={() =>setModalVisible(true)} textStyle="text-danger"/>
          
         </View>
       </ScrollView>
+
+      <ConfirmationDialog
+      visible={modalVisible}
+        title="Are you sure you want to log out?"
+        message=" We'll miss you, but you can always come back later!"
+      onResult={handleResult}
+      />
     </SafeAreaView>
   );
 };

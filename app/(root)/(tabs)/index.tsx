@@ -1,11 +1,23 @@
 import DeliveryLocation from "@/components/DeliveryLocation";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
+import { isAdminUser } from "@/constants/utils";
+import { useAppSelector } from "@/redux/store/hooks";
 import { Link } from "expo-router";
+import { useMemo } from "react";
 import { Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
+
+  const profile = useAppSelector((state) => state.auth.userProfile);
+     const token = useAppSelector((state) => state.auth.token);
+      const isAdmin = useMemo(() => isAdminUser(token), [token]);
+   const selectedDeliveryAddress = useAppSelector(
+      (state) => state.address.selectedDeliveryAddress
+    );
+    
+
   function getGreeting() {
     const now = new Date();
     const hours = now.getHours();
@@ -30,14 +42,14 @@ export default function Index() {
                 {getGreeting()}
               </Text>
               <Text className="text-xs font-rubik-medium text-black-300">
-                Atiqur Rahman
+                {profile?.fullName}
               </Text>
             </View>
           </View>
           <Image source={icons.bell} className="size-5" />
         </View>
       </View>
-        <DeliveryLocation />
+    {selectedDeliveryAddress && !isAdmin && <DeliveryLocation />}
       <ScrollView className="h-full px-5" showsVerticalScrollIndicator={false}>
         {/* Quick Actions */}
         <View className="mt-6 flex flex-row gap-2 justify-between">

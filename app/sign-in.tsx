@@ -1,10 +1,14 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform  } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import images from '@/constants/images'
 import icons from '@/constants/icons'
 import CustomInput from '@/components/CustomInput'
 import { router } from 'expo-router'
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks'
+import { RootState } from '@/redux/store/store'
+import { loginUser } from '@/redux/slices/authSlice'
+import Toast from 'react-native-toast-message'
 
 /**
  * SignIn component provides a user interface for signing in to the application.
@@ -14,17 +18,33 @@ import { router } from 'expo-router'
  */
 
 const LogIn = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleLogin = () => {
-    const data = {
-      email,
-      password
+  const dispatch = useAppDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setloading] = useState(false);
+
+  const handleLogin = async () => {
+    setloading(true)
+    const data = { email, password };
+   
+    try {
+      // Dispatch the loginUser thunk and wait for the result
+      const response = await dispatch(loginUser(data)).unwrap();
+      router.push('/');
+    } catch (error : any) {
+      console.log("error in login fumction", error);
+      Toast.show({
+        type: 'error', // can be 'success' or 'info'
+        text1: ' Error occured when Logining In',
+        text2: error || "An error occurred while logging in",
+        position: 'top',
+      });
+    }finally{
+      setloading(false)
     }
-    console.log('data',data)
-    router.push('/')
-  }
+  };
 
   const handleGoogleLogin = () => {
     router.push('/sign-up')
@@ -51,10 +71,10 @@ const LogIn = () => {
                     Welcome Back
                   </Text>
                   <Text className="text-white/80 text-lg font-rubik mb-8">
-                    Find your perfect home with ReState
+                    Find your perfect product with me
                   </Text>
 
-                  <CustomInput
+                  <CustomInput labelColor='white'
                     label="Email"
                     placeholder="Enter your email"
                     value={email}
@@ -63,7 +83,7 @@ const LogIn = () => {
                     autoCapitalize="none"
                   />
 
-                  <CustomInput
+                  <CustomInput labelColor='white'
                     label="Password"
                     placeholder="Enter your password"
                     value={password}
@@ -71,13 +91,17 @@ const LogIn = () => {
                     secureTextEntry
                   />
 
-                  <TouchableOpacity 
+                  <TouchableOpacity disabled={loading || !email || !password}
                     onPress={handleLogin}
-                    className="bg-primary-300/30 backdrop-blur rounded-xl py-4 my-4"
+                    className="bg-primary-300/30 backdrop-blur rounded-xl py-2 my-4 border border-primary-300"
                   >
-                    <Text className="text-white text-center font-rubik-bold text-lg">
-                      Sign In
-                    </Text>
+                    {!loading ? (<Text className="text-white text-center font-rubik-bold text-lg">
+                      Log In
+                    </Text>) : (
+                        <View className='flex flex-row items-center justify-center px-4'>
+                            <Text className='text-white text-center font-rubik-medium text-lg'> Signing In </Text>
+                          </View>
+                    )}
                   </TouchableOpacity>
 
                   <View className="flex-row items-center my-4">
@@ -88,15 +112,15 @@ const LogIn = () => {
 
                   <TouchableOpacity 
                     onPress={handleGoogleLogin} 
-                    className="bg-primary-200 backdrop-blur-md rounded-xl py-2"
+                    className="bg-white rounded-xl py-2 border border-primary-200"
                   >
                     <View className="flex-row items-center justify-center">
                       <Image 
                         source={icons.person} 
-                        className="w-5 h-5" 
+                        className="w-6 h-6" 
                         resizeMode="contain"
                       />
-                      <Text className="text-white font-rubik-medium text-lg ml-3">
+                      <Text className="text-black/70 font-rubik-medium text-lg ml-3">
                         Create New Account
                       </Text>
                     </View>

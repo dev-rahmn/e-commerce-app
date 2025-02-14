@@ -14,7 +14,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Location from 'expo-location';
 import icons from '@/constants/icons';
-import { SkypeIndicator, DotIndicator  } from 'react-native-indicators';
 
 interface ManageAddressFormProps {
   onSubmit: (data: any) => void;
@@ -127,14 +126,13 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
       // Get the current location
       const location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
-      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
 
       // Fetch additional address details using the OpenCage API
       const response = await fetch(
         `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=1c691fc6e3f94761b93e96943e0d18dc`
       );
       const userLocation = await response.json();
-      console.log(userLocation);
+      
       setLocationInfo(userLocation);
       setModalVisible(true);
       setLocationLoading(false);
@@ -238,10 +236,10 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
 
               {locationLoading ? (
                 <View className='flex flex-row items-center justify-start'>
-                    <SkypeIndicator  size={20} color="blue" maxScale={1}/>
-                    <Text className='text-blue-600'> Getting Location </Text>
-                     <DotIndicator size={4} count={3} color="blue" /> 
-                    </View>
+                <ActivityIndicator size="small" color='blue'/>
+                <Text className='text-blue-600'> Getting Location </Text>
+                
+                </View>
               ) : (
                 <Text className="text-white text-center">Use Current Location</Text>
               )}

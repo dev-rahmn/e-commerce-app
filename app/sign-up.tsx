@@ -23,9 +23,8 @@ const SignUp = () => {
   };
 
   const validateEmailHandler = () => {
-
+    
     if (!validateEmail(email)) {
-
       setEmailError('Invalid email format');
       return false;
     }
@@ -82,7 +81,7 @@ const handleEmailChange = (text: string) => {
       resizeMode="cover"
     >
       <SafeAreaView className="flex-1 bg-black/50">
-        <View className='px-5'>
+        <View className='px-5 mt-3'>
           <View className='flex flex-row justify-start items-center my-2'>
             <TouchableOpacity  
               className='flex flex-row items-center justify-center bg-white/30 rounded-full size-11'
@@ -113,21 +112,21 @@ const handleEmailChange = (text: string) => {
                 Join us and find your dream home
               </Text>
 
-              <CustomInput
+              <CustomInput labelColor='white'
                 label="First Name"
                 placeholder="Enter your first name"
                 value={firstName}
                 onChangeText={setFirstName}
               />
 
-              <CustomInput
+              <CustomInput labelColor='white'
                 label="Last Name"
                 placeholder="Enter your last name"
                 value={lastName}
                 onChangeText={setLastName}
               />
 
-              <CustomInput
+              <CustomInput labelColor='white'
                 label="Email"
                 placeholder="Enter your email"
                 value={email}
@@ -137,7 +136,7 @@ const handleEmailChange = (text: string) => {
                 autoCapitalize="none"
               />
 
-              <CustomInput
+              <CustomInput labelColor='white'
                 label="Password"
                 placeholder="Enter your password"
                 value={password}
@@ -145,7 +144,7 @@ const handleEmailChange = (text: string) => {
                 secureTextEntry
               />
 
-              <CustomInput
+              <CustomInput labelColor='white'
                 label="Confirm Password"
                 placeholder="Re-enter your password"
                 value={confirmPassword}
@@ -156,7 +155,7 @@ const handleEmailChange = (text: string) => {
 
               <TouchableOpacity disabled={!isFormValid()}
                 onPress={handleSignUp}
-                className={`rounded-xl py-4 mb-2 mt-6 ${!isFormValid() ? 'bg-gray-400' : 'bg-primary-200'}`}
+                className={`rounded-xl py-2 mb-2 mt-6 ${!isFormValid() ? 'bg-gray-400' : 'bg-primary-200'}`}
                 >
                 <Text className="text-white text-center font-rubik-bold text-lg">
                   Sign Up

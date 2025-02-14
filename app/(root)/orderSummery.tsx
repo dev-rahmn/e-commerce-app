@@ -1,10 +1,11 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
-import { addAddress, selectAddress, updateAddress } from "@/redux/slices/addressSlice";
+import { selectAddress } from "@/redux/slices/addressSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, SafeAreaView, ScrollView, Animated } from "react-native";
+import ManageAddress from "./manageAddress";
 
 const OrderSummary = () => {
   const dispatch =  useAppDispatch()
@@ -113,47 +114,7 @@ const [roadName, setRoadName] = useState("");
   const handleAddressChange = () => {
         setStep(1);
   }
-  const handleManageAddress = () =>{
-
-        // if (!name.trim()) return alert("Full Name is required");
-        // if (!phone.trim() || phone.length !== 10) return alert("Enter a valid 10-digit phone number");
-        // if (!pincode.trim() || pincode.length !== 6) return alert("Enter a valid 6-digit pincode");
-        // if (!state.trim()) return alert("State is required");
-        // if (!city.trim()) return alert("City is required");
-        // if (!buildingName.trim()) return alert("Building Name is required");
-        // if (!roadName.trim()) return alert("Road Name is required");
-
-    const newAddress = {
-        
-        name,
-        phone,
-        pincode,
-        state,
-        city,
-        buildingName,
-        roadName,
-        type: selectedType,
-      };
-    
-      if(selectedAddress?.id){
-
-        let data = { id: selectedAddress. id,...newAddress}
-        dispatch(updateAddress(data))
-        
-        setSelectedAddress(data)
-        console.log('update');
-
-      }else{
-        dispatch(addAddress({
-          ...newAddress,id: Date.now()
-        }))
-        console.log('add');
-      }
-    
-    
-      resetFields(); 
-      setIsAddingAddress(false)
-    };
+ 
   return (
     <SafeAreaView className="bg-white h-full">
       <View className="flex-1 py-2">
@@ -162,7 +123,7 @@ const [roadName, setRoadName] = useState("");
             <TouchableOpacity onPress={() => {setStep(2), setIsAddingAddress(false)}} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
               <Image source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
-            <Text className="text-xl font-rubik-base text-black-300 mt-2">Address - {`(${addresses.length})`}</Text>  
+            <Text className="text-xl font-rubik-base text-black-300 mt-2">Address </Text>  
         </View>)}
         {step === 2 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
             <TouchableOpacity onPress={() => router.back()} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
@@ -206,156 +167,16 @@ const [roadName, setRoadName] = useState("");
         </View>
         {/* wrap the all component all three steps in this div */} 
 
-        <View className=" px-2 ">   
+        <View >   
           {/* Step 1: Address Input */}
           {step === 1 && (
-           <View className=" pb-48">
-             {!isAddingAddress ? (
-                <FlatList
-                data={addresses}
-                contentContainerClassName="py-2 mt-4"
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                    className={`border border-gray-200 rounded-lg my-2`}
-                    onPress={() => addressSelectionHandler(item)}
-                    >
-
-                    <View className={`bg-white p-2 rounded-lg shadow py-4 ${selectedAddress?.id === item.id ? "border border-primary-300" : ""}`}>
-                        <View className="flex-row items-center">
-                            {/* Name */}
-                            <Text className={`text-lg font-semibold ${selectedAddress?.id === item.id ? "text-blue-600" : "text-black"}`}>
-                            {item.name}
-                            </Text>
-            
-                            {/* Address Type */}
-                            <View className="ml-2 px-2 py-1 bg-gray-200 rounded">
-                            <Text className="text-xs text-gray-700">{item.type.toUpperCase()}</Text>
-                            </View>
-            
-                            {/* Edit Button */}
-                            {selectedAddress?.id === item.id && (
-                                <TouchableOpacity className="ml-auto flex-row items-center bg-primary-300 px-4 py-1 rounded-lg border border-gray-300" 
-                                onPress={() =>editAddressHandler(item)}
-                                >
-
-                                    <Text className="text-white ml-auto">Edit</Text>
-                                </TouchableOpacity>
-                            )}
-                        </View>
-            
-                        {/* Address Details */}
-                        <Text className="text-gray-600">{item.buildingName}, {item.roadName}, {item.city}</Text>
-                        <Text className="text-gray-600">{item.state} - {item.pincode}</Text>
-                        <Text className="text-gray-900 font-semibold pt-2">{item.phone}</Text>
-                    </View>
-                    </TouchableOpacity>
-                    )}
-                    ListHeaderComponent={
-                        <TouchableOpacity className="py-3 px-6 rounded-lg flex-1 items-center justify-center bg-primary-300"
-                          onPress={() =>{ setIsAddingAddress(true), setSelectedAddress(null)}}>
-                        <Text className="text-white text-lg font-rubik-semibold">+ Add new address</Text>
-                    </TouchableOpacity>
-                    }
-                />
-             ):(
-      // ✅ Show Add Address Form
-      <ScrollView 
-        className="bg-gray-100 px-2 pb-48"  
-        showsVerticalScrollIndicator={false} 
-        keyboardShouldPersistTaps="handled"
-        >
-        <Text className="text-xl font-bold my-4 underline">Add Delivery Address</Text>
-
-        {/* Full Name */}
-        <Text className="text-gray-600 mb-1">Full Name (Required) *</Text>
-        <TextInput className="border border-gray-300 p-3 rounded-md mb-3"  
-        value={name} 
-        onChangeText={(text) => setName(text)}
-        placeholder="Full Name" />
-
-        {/* Phone Number */}
-        <Text className="text-gray-600 mb-1">Phone Number (Required) *</Text>
-        <TextInput className="border border-gray-300 p-3 rounded-md mb-3" placeholder="Phone Number" keyboardType="phone-pad"
-        value={phone} 
-        onChangeText={(text) => setPhone(text)}
-         />
-
-        {/* Pincode, State, City */}
-        <View className="flex-row gap-2 justify-between mr-2">
-          <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">Pincode *</Text>
-            <TextInput className="border border-gray-300 p-3 rounded-md" value={pincode} onChangeText={(text) => setPincode(text)} />
+           <View className=" pb-24">
+             <View>
+              <ManageAddress showAddAction={true} onDeliverHandler={() => setStep(2)} />
+            </View> 
           </View>
-          <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">State *</Text>
-            <TextInput className="border border-gray-300 p-3 rounded-md" value={state} onChangeText={(text) => setState(text)} />
-          </View>
-        </View>
-
-        <View className="flex-row gap-2 justify-between mr-2">
-          
-          <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">City *</Text>
-            <TextInput className="border border-gray-300 p-3 rounded-md" value={city} onChangeText={(text) => setCity(text)} />
-          </View>
-          <View className="w-1/2">
-          <Text className="text-gray-600 mb-1">Location *</Text>
-            <TouchableOpacity className="bg-blue-600 p-3 rounded-md mb-3">
-            <Text className="text-white text-center">Use My Location</Text>
-            </TouchableOpacity>
-        </View>
-        </View>
-
-        {/* Use My Location Button */}
-       
-
-        {/* Address Details */}
-        <Text className="text-gray-600 mb-1">House No., Building Name *</Text>
-        <TextInput className="border border-gray-300 p-3 rounded-md mb-3" value={buildingName} onChangeText={(text) => setBuildingName(text)} />
-
-        <Text className="text-gray-600 mb-1">Road name, Area, Colony *</Text>
-        <TextInput className="border border-gray-300 p-3 rounded-md mb-3" value={roadName} onChangeText={(text) => setRoadName(text)} />
-
-        {/* Address Type Selection */}
-        <Text className="text-gray-600 mb-1">Type of Address :</Text>
-        <View className="flex-row gap-2 my-2 w-1/2">
-          <TouchableOpacity
-            className={`flex-1 py-2 px-4 border rounded-lg ${selectedType === "home" ? "border-blue-600 border-2" : "border-black"}`}
-            onPress={() => setSelectedType("home")}
-          >
-            <View className="flex-row items-center gap-2 justify-center">
-            <Animated.Image source={icons.home} 
-                 tintColor={selectedType === "home" ? "#0061FF" : "#666876"}
-            className={`w-6 h-6  text-center`}
-            />
-
-            <Text className={`${selectedType === "home" ? "text-blue-600" : "text-black"} text-center font-rubik-semibold`}>Home</Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className={`flex-1 py-2 px-4 border rounded-lg ${selectedType === "work" ? "border-blue-600 border-2" : "border-black"}`}
-            onPress={() => setSelectedType("work")}
-          >
-            <View className="flex-row items-center gap-2 justify-center">
-
-            <Animated.Image source={icons.work} 
-                 tintColor={selectedType === "work" ? "#0061FF" : "#666876"}
-            className={`w-6 h-6  text-center`}
-            />
-            <Text className={`${selectedType === "work" ? "text-blue-600" : "text-black"} text-center font-rubik-semibold`}>Work</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-       
-      </ScrollView>
-    )}
-  </View>
-)}
+          )}
             
-
           {/* Step 2: Order Summary */}
             {step === 2 && (
             <ScrollView 
@@ -371,7 +192,7 @@ const [roadName, setRoadName] = useState("");
                 </View>
 
                 {/* Delivery Info */}
-                <View className="bg-white p-2 rounded-lg shadow">
+                <View className="bg-white p-2 mx-2 rounded-lg shadow">
                     <View className="flex-row justify-between items-center mb-4">
                     <Text className="text-lg font-semibold">Deliver To :</Text>
                     <TouchableOpacity className="bg-primary-300 px-3 py-1 rounded-md" onPress={handleAddressChange}>
@@ -392,7 +213,7 @@ const [roadName, setRoadName] = useState("");
                 </View>
 
                 {/* Product Card */}
-                <View className="bg-white p-2 rounded-lg shadow mt-4 flex-row">
+                <View className="bg-white mx-2 p-2 rounded-lg shadow mt-4 flex-row">
                     <Image
                     source={images.home}
                     className="w-20 h-20 rounded-lg"
@@ -407,7 +228,7 @@ const [roadName, setRoadName] = useState("");
                 </View>
 
                 {/* VIP Membership */}
-                <View className="bg-white p-4 rounded-lg shadow mt-4">
+                <View className="bg-white p-4 mx-2 rounded-lg shadow mt-4">
                     <Text className="text-lg font-semibold">Get VIP membership</Text>
                     <Text className="text-gray-500">
                     Enjoy savings worth ₹256.0 now! ₹499 for 12 months.
@@ -418,7 +239,7 @@ const [roadName, setRoadName] = useState("");
                 </View>
 
                 {/* Price Details */}
-                <View className="bg-white p-4 rounded-lg shadow mt-4">
+                <View className="bg-white p-4 mx-2  rounded-lg shadow mt-4">
                     <Text className="text-lg font-semibold">Price Details</Text>
                     <View className="flex-row justify-between mt-2">
                     <Text>Price (1 item)</Text>
@@ -473,28 +294,7 @@ const [roadName, setRoadName] = useState("");
             <Text className="text-white text-center">Back</Text>
           </TouchableOpacity>
         )}
-        {(step === 1 && !isAddingAddress) && (
-          <TouchableOpacity className="bg-orange-500 py-3 px-6 rounded-full flex-1" onPress={handleAddressSelection} disabled={!selectedAddress}>
-          <Text className="text-white text-center text-lg font-bold">DELIVER HERE</Text>
-        </TouchableOpacity>
-        )}
-            {(step === 1 && isAddingAddress) && (
-    
-                <TouchableOpacity className="bg-orange-500 py-3 px-6 rounded-lg flex-1" onPress={handleManageAddress}>
-                  <Text className="text-white text-center font-bold">Save Address</Text>
-                </TouchableOpacity>    
-            )}
-        {(step === 1 && isAddingAddress) && (
-
-            <TouchableOpacity  className="bg-gray-500 py-3 px-6 rounded-lg flex-1"
-              onPress={() => {setIsAddingAddress(false),resetFields()}
-
-              } // ✅ Hide Add Address form
-            >
-              <Text className="text-white text-center font-bold">Cancel</Text>
-            </TouchableOpacity>
-        )}
-
+        
         {( step === 2) && (
         <TouchableOpacity className="bg-green-500 py-3 px-6 rounded-full flex-1" onPress={handleNextStep}>
           <Text className="text-white text-center"> CONTINUE</Text>

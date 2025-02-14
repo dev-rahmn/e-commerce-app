@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, FlatList, TouchableOpacity, Image } from 'react-native'
+import { View, Text, ScrollView, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {Card, FeaturedCard, OrderCard} from '@/components/Card'
@@ -51,7 +51,7 @@ const Order = () => {
                       ListEmptyComponent={
                           loading ? (
                           <View className="flex-1  items-center justify-center mt-60">  
-                            <UIActivityIndicator size={50} color="#0061FF"/>
+                            <ActivityIndicator size='large' color="#0061FF"/>
                           </View>
                         ) : (
                           <NoResults />
