@@ -153,7 +153,9 @@ const BottomDrawer = forwardRef<BottomDrawerRef, Props>(
 
                 {/* Scrollable content */}
                 <ScrollView
-              className="pt-10"
+                 showsVerticalScrollIndicator={false}
+                 keyboardShouldPersistTaps="handled" // or "always"
+                className="pt-10"
               // contentContainerStyle={{ paddingBottom: 20 }}
             >
                   {children}

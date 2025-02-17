@@ -163,7 +163,9 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
   };
 
   return (
-    <ScrollView className="pb-32">
+    <ScrollView className="pb-32"
+    keyboardShouldPersistTaps="handled" // or "always"
+    >
       <View className="px-2">
         <View className="flex flex-row px-2 items-center justify-between">
           <Text className="text-xl font-bold my-4">

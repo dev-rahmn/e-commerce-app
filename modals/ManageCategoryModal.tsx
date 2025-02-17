@@ -7,7 +7,16 @@ const ManageCategoryModal = ({ visible, onClose, category } : any) => {
   const [name, setName] = useState('');
 
   const hadleAdd = () => {
-    console.log( name );
+    if(category?.id){
+      const data = {
+        id:category.id, name: name
+      }
+      console.log("updating",data)
+    }else{
+      
+      console.log("adding",name)
+
+    }
     // onClose();
   };
 
@@ -29,7 +38,9 @@ const ManageCategoryModal = ({ visible, onClose, category } : any) => {
     <Modal visible={visible}  animationType="fade" transparent >
       <View className="flex-1 justify-center items-center bg-black bg-opacity-50 border border-gray-200">
         <View className="px-4 py-2  rounded-lg w-11/12 bg-white border border-black-200" >
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled" // or "always"
+              >
             <View className="flex flex-row items-center justify-between my-2">
 
             <Text className="text-xl font-bold ">{category ? 'Update Category' : 'Add Category'}</Text>

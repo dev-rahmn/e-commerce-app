@@ -91,7 +91,9 @@ const Category = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="bg-white h-full"
+    
+    >
       <View className="px-4 py-2 flex flex-row  items-center justify-between">
         <TouchableOpacity
           onPress={() => router.back()}
