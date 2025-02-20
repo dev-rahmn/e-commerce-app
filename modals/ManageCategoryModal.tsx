@@ -1,24 +1,46 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Modal,TouchableOpacity, ScrollView } from 'react-native';
-
+import { View, Text, Modal,TouchableOpacity, ScrollView, ProgressBarAndroid, ActivityIndicator } from 'react-native';
+import { useAppDispatch } from '@/redux/store/hooks';
 import CustomInput from '@/components/CustomInput';
+import Toast from 'react-native-toast-message'
+
+import { manageCategory } from '@/redux/slices/categorySlice';
 
 const ManageCategoryModal = ({ visible, onClose, category } : any) => {
   const [name, setName] = useState('');
-
-  const hadleAdd = () => {
-    if(category?.id){
-      const data = {
-        id:category.id, name: name
-      }
-      console.log("updating",data)
-    }else{
-      
-      console.log("adding",name)
-
+  const [loading, setLoading] = useState(false)
+const dispatch  =  useAppDispatch()
+const handleAdd = async () => {
+  const data = category?.id ? { id: category.id, name } : { name };
+  try {
+    setLoading(true)
+    const response = await dispatch(manageCategory(data)).unwrap();
+    if (response) {
+      Toast.show({
+        type: 'success', // can be 'success' or 'info'
+        text1: response.message,
+        position: 'top',
+        topOffset: 10,
+        visibilityTime: 2000,
+      });
+      onClose();
+      setName(''); // clear the input
     }
-    // onClose();
-  };
+  } catch (error) {
+    // console.log(error)
+    Toast.show({
+      type: 'error',
+       text1:error ? error.toString() : 'An error occurred',
+      position: 'top',
+      topOffset: 10,
+      visibilityTime: 2000,
+    });
+  }finally{
+    setLoading(false)
+  }
+};
+
+
 
   useEffect(() =>{
     if(category && category.id){
@@ -56,14 +78,21 @@ const ManageCategoryModal = ({ visible, onClose, category } : any) => {
               value={name}
               onChangeText={setName}
             />
-
+          {!loading ? (
           <View className="flex-row items-end justify-end my-4">
             
-            <TouchableOpacity onPress={hadleAdd} 
+            <TouchableOpacity onPress={handleAdd} 
             className="bg-green-700 py-2 px-5 rounded-lg">
               <Text className="text-white">{category ? 'Update' : 'Add'}</Text>
             </TouchableOpacity>
+          </View>) : (
+            <View className='flex-row items-center justify-center mb-4'>
+           
+          <ActivityIndicator size={20} color="#0000ff" />
           </View>
+          
+          
+          )}
           </ScrollView>
         </View>
       </View>

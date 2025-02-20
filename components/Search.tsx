@@ -8,7 +8,6 @@ const Search = () => {
     const path = usePathname()
     const params = useLocalSearchParams<{query?: string}>()
     const [search, setSearch] = useState(params.query);
-
     const debounceSearch = useDebouncedCallback((text: string) => router.setParams({query: text}), 200);
 
 const handleSearch = (text: string) => {

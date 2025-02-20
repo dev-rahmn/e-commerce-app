@@ -34,7 +34,7 @@ const LogIn = () => {
       const response = await dispatch(loginUser(data)).unwrap();
       router.push('/');
     } catch (error : any) {
-      console.log("error in login fumction", error);
+     
       Toast.show({
         type: 'error', // can be 'success' or 'info'
         text1: ' Error occured when Logining In',

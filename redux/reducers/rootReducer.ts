@@ -2,12 +2,12 @@ import { combineReducers } from "@reduxjs/toolkit";
 import addressReducer from "../slices/addressSlice";
 import authReducer from "../slices/authSlice";
 import categoryReducer from "../slices/categorySlice";
-
+import orderReducer from "../slices/orderSlice";
 const appReducer = combineReducers({
   auth: authReducer,
   address: addressReducer,
   category: categoryReducer,  
-
+  order: orderReducer
 });
 
 // Allow state to be undefined in the reducer signature.

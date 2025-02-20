@@ -1,9 +1,14 @@
-import { View, Text, Image, TouchableOpacity, ScrollView, Animated, Easing } from 'react-native';
-import React, { useEffect, useRef } from 'react';
+import { View, Text, Image, TouchableOpacity, ScrollView, Animated, Easing, UIManager, Platform, LayoutAnimation, LayoutChangeEvent } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import icons from '@/constants/icons';
 import { allTrackingSteps } from '@/utils/orderDetails';
+import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
+import { fetchOrderDetail } from '@/redux/slices/orderSlice';
+import { RootState } from '@/redux/store/store';
+import { isAdminUser } from '@/constants/utils';
+import Loading from '@/utils/Loading';
 
 const getTrackingSteps = (currentStatus: string) => {
   const currentIndex = allTrackingSteps.findIndex(step => step.label === currentStatus);
@@ -14,14 +19,63 @@ const getTrackingSteps = (currentStatus: string) => {
   }));
 };
 
+// Create an Animated component that supports Tailwind's className
+const AnimatedView = Animated.createAnimatedComponent(View);
+
 const OrderDetails = () => {
+  const [expanded, setExpanded] = useState(false);
+  const animation = useRef(new Animated.Value(0)).current;
+  const [contentHeight, setContentHeight] = useState(0);
+
+  // Interpolate the animated value to map from 0 to contentHeight
+  const heightInterpolate = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 140],
+  });
+  const toggleCustomerInfo = () => {
+    const finalValue = expanded ? 0 : 1;
+    Animated.spring(animation, {
+      toValue: finalValue,
+      stiffness: 300,              // High stiffness for fast acceleration
+      damping: 100,                // High damping to quickly stop oscillations
+      mass: 1,                     
+      overshootClamping: true,     // Prevents any overshooting (bounce)
+      useNativeDriver: false,      // Height animations cannot use the native driver
+    }).start(() => {
+      setExpanded(!expanded);
+    });
+  };
+  
+  // Capture the content's height
+  const onContentLayout = (event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+    if (height !== contentHeight) {
+      setContentHeight(height);
+    }
+  };
+
+
   const { id } = useLocalSearchParams<{ id?: string }>();
+  const dispatch = useAppDispatch();
+const orderDetails = useAppSelector((state: RootState) => state.order.orderDetail)
+
+    const token = useAppSelector((state) => state.auth.token);
+
+    const isAdmin = useMemo(() => isAdminUser(token), [token]);
+    const { loading, error, data}  = orderDetails;
+
+
+const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
+  useEffect(() => {
+    if(id) dispatch(fetchOrderDetail(id))
+  },[id, dispatch ])
+
+
   const lineAnimations = useRef(allTrackingSteps.map(() => new Animated.Value(0))).current;
   const scaleAnimations = useRef(allTrackingSteps.map(() => new Animated.Value(1))).current;
   const pulseAnimations = useRef(allTrackingSteps.map(() => new Animated.Value(1))).current;
 
-  const orderStatus = 'Shipped';
-  const trackingSteps = getTrackingSteps(orderStatus);
+  const trackingSteps = getTrackingSteps(data ? data?.status.toString() : '');
 
   useEffect(() => {
     trackingSteps.forEach((step, index) => {
@@ -54,26 +108,78 @@ const OrderDetails = () => {
     });
   }, [trackingSteps]);
 
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center ">
+        <Loading />
+      </View>
+    );
+  }
+  
+  if (error) {
+    return (
+      <View className="flex-1 items-center justify-center mt-24">
+        <Text className="text-red-500 text-lg font-semibold">Something went wrong! Please try again.</Text>
+      </View>
+    );
+  }
+
+
   return (
     <SafeAreaView className="bg-white h-full">
       <View className="px-4 py-2 flex flex-row items-center justify-between border-b border-gray-200">
         <TouchableOpacity onPress={() => router.back()} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
           <Image source={icons.backArrow} className="size-6" />
         </TouchableOpacity>
-        <Text className="text-lg font-bold">Order #{id}</Text>
+        <Text className="text-lg font-bold">{id}</Text>
       </View>
 
       <View className="mt-5 px-5">
         <Text className="text-lg font-semibold mb-2">Order Information:</Text>
-        <Text className="text-base text-gray-700">• Product Name: Example Product</Text>
-        <Text className="text-base text-gray-700">• Quantity: 2</Text>
-        <Text className="text-base text-gray-700">• Total Price: ₹200</Text>
+        <Text className="text-base text-gray-700">Product Name: {data?.productName}</Text>
+        <Text className="text-base text-gray-700 my-2">Quantity: {data?.quantity}</Text>
+        <Text className="text-base text-gray-700">Total Price: ₹{data?.productPrice}</Text>
       </View>
 
-      <ScrollView contentContainerClassName="p-5 pb-32">
-        <Text className="text-xl font-semibold mb-3">Tracking Status</Text>
+      {isAdmin && (
+        <View className="flex flex-col my-3 px-3">
+          <TouchableOpacity onPress={toggleCustomerInfo}>
+            <View className="py-3 px-2 flex flex-row items-center justify-between border rounded-lg border-gray-200">
+              <Text className="text-lg font-semibold">
+                Customer Information
+              </Text>
+              <Text className="text-lg font-semibold">
+                {expanded ? "▲" : "▼"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <AnimatedView
+            className="overflow-hidden"
+            style={{ height: heightInterpolate }}
+          >
+            <View
+              onLayout={onContentLayout}
+              className="px-3 mt-4 py-4 bg-green-100 border border-green-500 rounded-lg"
+            >
+              <Text className="font-rubik-medium text-gray-700">
+                Customer Email: {data?.userEmail}
+              </Text>
+              <Text className="font-rubik-medium text-gray-700 my-2">
+                Customer Name: {data?.userFirstName} {data?.userLastName}
+              </Text>
+              <Text className="font-rubik-medium text-gray-700">
+                Delivery Address: add here some address
+              </Text>
+            </View>
+          </AnimatedView>
+        </View>
+      )}
 
-        <View className="mt-5">
+      <ScrollView contentContainerClassName="p-5 pb-32">
+        <Text className="text-xl font-semibold my-4 ">Order Status Steps</Text>
+
+        <View className="mt-2">
           {trackingSteps.map((step, index) => (
             <View key={step.id} className="flex flex-row items-center">
               <View className="flex items-center">
@@ -117,17 +223,45 @@ const OrderDetails = () => {
         </View>
       </ScrollView>
 
+      
+      
       {/* Action Buttons */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white p-2 flex flex-row justify-between border-t border-gray-300">
-        
-        <TouchableOpacity className="bg-green-500 py-3 px-6 rounded-full flex-1 mr-2">
-          <Text className="text-white text-center font-semibold text-lg">Accept</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity className="bg-red-500 py-3 px-6 rounded-full flex-1 ml-2">
-          <Text className="text-white text-center font-semibold text-lg">Cancel</Text>
-        </TouchableOpacity>
+      <View className="absolute bottom-0 left-0 right-0 bg-white px-2  flex flex-row justify-between border-t border-gray-300">
+            {statusFlag === null && isAdmin ? (
+              <>
+              {/* Cancel Button  for admin*/}
+              <TouchableOpacity className="bg-red-700 py-3 px-6 my-2 rounded-full flex-1 mr-2">
+                <Text className="text-white text-center font-semibold text-lg">Cancel</Text>
+              </TouchableOpacity>
+
+              {/* Accept Button  for admin*/}
+              <TouchableOpacity className="bg-green-700 py-3 px-6 my-2 rounded-full flex-1 ml-2">
+                <Text className="text-white text-center font-semibold text-lg">Accept</Text>
+              </TouchableOpacity>
+          </>
+          ) : isAdmin ? (
+            data?.status !== "Delivered" && data?.status !== "Cancelled" ? (
+              <TouchableOpacity className="bg-blue-700 py-3 px-6 my-2 rounded-full flex-1 ml-2">
+                {/* update the order status admin can update  */}
+              <Text className="text-white text-center font-semibold text-lg">Update Status</Text>
+            </TouchableOpacity>
+            ) : (
+              null
+            )
+          ) :  data?.status !== "Delivered" && data?.status !== "Cancelled" ? (
+            
+            <TouchableOpacity className="bg-red-700 py-3 my-2 px-6 rounded-full flex-1 mr-2">  
+            {/* cancel button for user */}
+            <Text className="text-white text-center font-semibold text-lg">Cancel</Text>
+          </TouchableOpacity>
+          ) : (
+            <View className={`${data?.status === "Delivered" ? "bg-green-700" : data.status === "Cancelled" ? "bg-red-700" : "bg-orange-700"} rounded-full my-2 flex-1 p-3 `}>
+            <Text className="text-center text-lg font-semibold text-white">Your order is {data?.status}</Text>
+          </View>
+          )}
       </View>
+     
     </SafeAreaView>
   );
 };

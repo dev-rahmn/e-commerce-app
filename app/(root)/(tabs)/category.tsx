@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
@@ -9,30 +9,23 @@ import { UIActivityIndicator } from "react-native-indicators";
 import { Card, CategoryCard } from "@/components/Card";
 import ManageCategoryModal from "@/modals/ManageCategoryModal";
 import DeleteModal from "@/modals/DeleteModal";
+import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
+import { deleteCategory, getCategories } from "@/redux/slices/categorySlice";
+import { RootState } from "@/redux/store/store";
+import Toast from "react-native-toast-message";
+import Loading from "@/utils/Loading";
 
 
-const sampleItem = [
-  { id: 1, name: "Cozy Studio"},
-  { id: 2, name: "Rahul Boss" },
-  { id: 3, name: "Rahul Kumar" },
-  { id: 4, name: "Rahul Studio" },
-  { id: 5, name: "Rahul Studio" },
-  { id: 6, name: "Rahul Kumar" },
-  { id: 7, name: "Rahul Studio" },
-  { id: 8, name: "Rahul Studio" },
-  { id: 21, name: "Rahul Kumar" },
-  { id: 23, name: "Rahul Studio" },
-  { id: 25, name: "Rahul Pandit" },
-  { id: 95, name: "Rahul Studio"},
-  { id: 233, name: "Rahul Boss" },
-];
 const Category = () => {
   const params = useLocalSearchParams();
   const searchedItem = params.query || '';
-  const isAdmin = true;
-  const loading = false;
 
-  const [filteredItems, setFilteredItems] = useState(sampleItem);
+const dispatch = useAppDispatch();
+const {categories, loading, error} = useAppSelector((state: RootState) => state.category);
+
+  const isAdmin = true;
+
+  const [filteredItems, setFilteredItems] = useState(categories);
   const [modalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
   const [updatedCategory, setUpdatedCategory] = useState(null);
@@ -40,15 +33,19 @@ const Category = () => {
 
   useEffect(() => {
     const searchQuery = String(searchedItem || "").toLowerCase(); // Ensure searchedItem is a string
-    const filtered = sampleItem.filter((item) => {
+    const filtered = categories.filter((item) => {
       const name = String(item.name || "").toLowerCase(); // Ensure item.name is a string
       return name.includes(searchQuery);
     });
-  
     setFilteredItems(filtered);
-  }, [searchedItem, sampleItem]);
+  }, [searchedItem, categories]);
+
+  useEffect(() =>{
+      dispatch(getCategories())
+      },[dispatch])
 
   const addCategoryHandler = () => {
+    setUpdatedCategory(null);
     setModalVisible(true);
   };
 
@@ -82,11 +79,21 @@ const Category = () => {
     </View>
   ));
 
-  const handleModalClose = (deleteConfirmed: boolean) => {
-    setDeleteModalVisible(false); // Close modal
-
+  const handleModalClose = async (deleteConfirmed: boolean) => {
+   
+       setDeleteModalVisible(false); // Close modal
     if (deleteConfirmed && selectedId !== null) {  
-      console.log("Item deleted!", selectedId); // Perform delete action here
+    const res = await dispatch(deleteCategory(selectedId)).unwrap()
+    if (res){
+
+        Toast.show({
+                  type: 'info', // can be 'success' or 'info'
+                  text1: res,
+                  position: 'top',
+                  topOffset:10,
+                  visibilityTime:2000
+                });
+    }
     }
   };
 
@@ -127,7 +134,7 @@ const Category = () => {
         ListEmptyComponent={
           loading ? (
             <View className="flex-1  items-center justify-center mt-60">
-              <UIActivityIndicator size={50} color="#0061FF" />
+              <Loading />
             </View>
           ) : (
             <NoResults />

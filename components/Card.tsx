@@ -110,17 +110,21 @@ export const OrderCard = ({ item, onPress }: Props) => {
 
         {/* Second View: Name, Price, and Status */}
         <View className="flex-1 ml-3">
-          <Text className="text-base font-rubik-bold text-black-300">
-            Cozy Studio
+          <Text className="text-xl font-rubik-bold text-black-300">
+           {item.productName}
           </Text>
           <Text className="text-xs font-rubik text-black-100">
-            22 W 33rd St, New York
+           Quantity : {item.quantity}
           </Text>
           <View className="flex flex-row items-center justify-between mt-2">
             <Text className="text-base font-rubik-bold text-primary-300">
-              $2200
+              ₹ {item.productPrice}
             </Text>
-            <Text className="text-xs font-rubik text-green-500">Available</Text>
+            <Text className={`${item.status === "Delivered" ? "bg-green-700" : item.status === "Cancelled" ? "bg-red-700" : "bg-orange-700"}
+             text-white text-xs px-3 py-1 rounded-lg font-rubik items-center justify-center`}
+             >
+              {item.status}
+            </Text>
           </View>
         </View>
 
@@ -138,8 +142,6 @@ export const CategoryCard = ({ item, adminActions  }: CategoryProps) => {
     <View
       className="flex-1 w-full mt-2 px-4 py-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
     >
-
-
       <View className="flex flex-row items-center justify-between mt-2">
         {/* First View: Image */}
         <View className="flex flex-row items-center">

@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/store/hooks';
 import { RootState } from '@/redux/store/store';
 import { getAllAddresses } from '@/redux/slices/addressSlice';
 import { isAdminUser } from '@/constants/utils';
+import { getCategories } from '@/redux/slices/categorySlice';
 
 
 const AppLayout = () => {
@@ -20,6 +21,7 @@ const AppLayout = () => {
       if (profile && !isAdmin && token) { // Check for token here as well
         dispatch(getAllAddresses(profile?.userId));
       }
+      dispatch(getCategories())
     }, [profile, isAdmin, dispatch, token]); // Add token to the dependency array
   
     if (!token) {
