@@ -1,14 +1,19 @@
 import { View, Text, Image, TouchableOpacity, ScrollView, Platform, Dimensions, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import icons from '@/constants/icons';
 import images from '@/constants/images';
+import { useAppSelector } from '@/redux/store/hooks';
+import { isAdminUser } from '@/constants/utils';
 
 const Property = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const windowHeight = Dimensions.get("window").height;
 
+    const token = useAppSelector((state) => state.auth.token);
+      const isAdmin = useMemo(() => isAdminUser(token), [token]);
+  
  const data =[
   { id: 1, image: images.onboarding },
   { id: 2, image: images.japan },
@@ -16,7 +21,6 @@ const Property = () => {
   { id: 4, image: images.noResult },
 ]
 
-  console.log(windowHeight);
   return (
     <View className="flex-1 bg-white">
       <ScrollView 
@@ -106,20 +110,20 @@ const Property = () => {
 
           {/* Additional Property Features */}
           <View className="mt-4">
-            <Text className="text-lg font-rubik-bold">Additional Features</Text>
-            <Text className="text-sm font-rubik text-black-100">
-              - 2 Bedrooms
-            </Text>
-            <Text className="text-sm font-rubik text-black-100">
-              - 1 Bathroom
-            </Text>
-            <Text className="text-sm font-rubik text-black-100">
-              - Fully Furnished
-            </Text>
-            <Text className="text-sm font-rubik text-black-100">
-              - High-Speed Internet
-            </Text>
-          </View>
+              <Text className="text-lg font-rubik-bold">Additional Features</Text>
+              <Text className="text-sm font-rubik text-black-100">
+                - 2 Bedrooms
+              </Text>
+              <Text className="text-sm font-rubik text-black-100">
+                - 1 Bathroom
+              </Text>
+              <Text className="text-sm font-rubik text-black-100">
+                - Fully Furnished
+              </Text>
+              <Text className="text-sm font-rubik text-black-100">
+                - High-Speed Internet
+              </Text>
+            </View>
         </View>
       </ScrollView>   
 
@@ -131,19 +135,19 @@ const Property = () => {
               Price
             </Text>
             <Text
-              numberOfLines={1}
-              className="text-primary-300 text-start text-2xl font-rubik-bold"
-            >
-              $800
+                numberOfLines={1} className="text-primary-300 text-start text-2xl font-rubik-bold">
+                $800
             </Text>
           </View>
-
+            {!isAdmin && (
+              
           <TouchableOpacity className="flex-1 flex flex-row items-center justify-center bg-primary-300 py-3 rounded-full shadow-md shadow-zinc-400"
           onPress={() => router.push('/orderSummery')}>
             <Text className="text-white text-lg text-center font-rubik-bold">
               Buy Now
             </Text>
           </TouchableOpacity>
+            )}
         </View>
       </View>
     </View>

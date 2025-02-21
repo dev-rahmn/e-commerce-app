@@ -30,6 +30,7 @@ const ManageAddressList = (
       const [activeMenu, setActiveMenu] = useState<any | null>(null);
       const [selectedId, setSelectedId] = useState<number | null>(null); // Store ID of selected item
      const [reFetch, setReFetch] = useState(false);
+
     const editAddressHandler =() =>{
         openUpdateAddress()
       }
@@ -68,7 +69,7 @@ const ManageAddressList = (
   
     <View className='px-4 pb-28'>
         
-        <FlatList
+        <FlatList 
             nestedScrollEnabled={true} 
             scrollEnabled={!disableScroll}
             data={addresses}

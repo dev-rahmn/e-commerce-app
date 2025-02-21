@@ -9,6 +9,7 @@ import Toast from "react-native-toast-message";
 import { Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomSplash from "@/utils/CustomSplash";
+import { ThemeProvider } from "@/contaxtapis/ThemeContext";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -64,16 +65,18 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <Animated.View
-          style={{
-            flex: 1,
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }, { translateY: translateY }],
-          }}
-        >
-          <Stack screenOptions={{ headerShown: false }} />
-          <Toast />
-        </Animated.View>
+        <ThemeProvider>
+            <Animated.View
+                style={{
+                  
+                  flex: 1,
+                  opacity: fadeAnim,
+                  transform: [{ scale: scaleAnim }, { translateY: translateY }],
+                }}>
+              <Stack screenOptions={{ headerShown: false }} />
+              <Toast />
+            </Animated.View>
+         </ThemeProvider>
       </PersistGate>
     </Provider>
   );

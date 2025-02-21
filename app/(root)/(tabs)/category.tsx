@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import icons from "@/constants/icons";
@@ -14,6 +14,8 @@ import { deleteCategory, getCategories } from "@/redux/slices/categorySlice";
 import { RootState } from "@/redux/store/store";
 import Toast from "react-native-toast-message";
 import Loading from "@/utils/Loading";
+import { useTheme } from "@/contaxtapis/ThemeContext";
+import { isAdminUser } from "@/constants/utils";
 
 
 const Category = () => {
@@ -24,7 +26,10 @@ const dispatch = useAppDispatch();
 const {categories, loading, error} = useAppSelector((state: RootState) => state.category);
 
   const isAdmin = true;
-
+     const token = useAppSelector((state) => state.auth.token);
+      // const isAdmin = useMemo(() => isAdminUser(token), [token]);
+  
+    const {bgColor, textColor} = useTheme();
   const [filteredItems, setFilteredItems] = useState(categories);
   const [modalVisible, setModalVisible] = useState(false);
   const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -98,18 +103,18 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
   };
 
   return (
-    <SafeAreaView className="bg-white h-full"
+    <SafeAreaView className="h-full" style={{ backgroundColor: bgColor }}
     
     >
       <View className="px-4 py-2 flex flex-row  items-center justify-between">
-        <TouchableOpacity
+        <TouchableOpacity style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
           onPress={() => router.back()}
-          className="bg-primary-100 h-10 w-10  rounded-full flex items-center justify-center "
+          className=" h-10 w-10  rounded-full flex items-center justify-center "
         >
-          <Image source={icons.backArrow} className="size-6" />
+          <Image source={icons.backArrow} className="size-6" tintColor={textColor}/>
         </TouchableOpacity>
 
-        <Text className="text-xl font-rubik-medium text-black-300 mt-2">
+        <Text className="text-xl font-rubik-medium mt-2" style={{ color: textColor }}>
           {isAdmin ? "Category Management" : "Category List"}
         </Text>
 
@@ -141,7 +146,7 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
           )
         }
         ListHeaderComponent={
-          <View className="px-2">
+          <View >
             <Search />
           </View>
         }

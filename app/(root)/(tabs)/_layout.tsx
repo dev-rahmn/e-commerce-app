@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import { Image, ImageSourcePropType, Text, View, Animated } from "react-native";
 import { useEffect, useRef } from "react";
 import icons from "@/constants/icons";
+import { useTheme } from "@/contaxtapis/ThemeContext";
 
 const TabIcon = ({
   focused,
@@ -14,6 +15,8 @@ const TabIcon = ({
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+
+const { bgColor, textColor, theme} = useTheme()
 
   useEffect(() => {
     if (focused) {
@@ -49,7 +52,7 @@ const TabIcon = ({
     <View className="flex-1 mt-3 flex flex-col items-center">
       <Animated.Image
         source={icon}
-        tintColor={focused ? "#0061FF" : "#666876"}
+        tintColor={focused ?  theme === "light" ? "#0061FF" :"#0aa205" : `${textColor}`}
         resizeMode="contain"
         style={{
           width: 24,
@@ -58,10 +61,10 @@ const TabIcon = ({
         }}
       />
       <Text
-        className={`${
+        className={`${  //"text-primary-300 font-rubik-medium"
           focused
-            ? "text-primary-300 font-rubik-medium"
-            : "text-black-200 font-rubik"
+            ? theme === "light" ? "text-primary-300 font-rubik-medium" : 'text-green-600 font-rubik-medium'
+            : `font-rubik-light text-${textColor}`
         } text-xs w-full text-center mt-1`}
       >
         {title}
@@ -71,12 +74,13 @@ const TabIcon = ({
 };
 
 const TabsLayout = () => {
+  const { bgColor, textColor, theme } = useTheme();
   return (
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "white",
+          backgroundColor: `${bgColor}`,
           position: "absolute",
           borderTopColor: "#0061FF1A",
           borderTopWidth: 1,
@@ -105,7 +109,7 @@ const TabsLayout = () => {
           ),
         }}
       />
-      <Tabs.Screen
+      <Tabs.Screen 
         name="category"
         options={{
           title: "Category",

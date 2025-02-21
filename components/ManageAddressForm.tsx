@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Location from 'expo-location';
 import icons from '@/constants/icons';
+import { useTheme } from '@/contaxtapis/ThemeContext';
 
 interface ManageAddressFormProps {
   onSubmit: (data: any) => void;
@@ -107,6 +108,7 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
     onClose();
   };
 
+  const {bgColor, textColor} = useTheme();
   // Function to get location and show the modal
   const getUserLocation = async () => {
     setLocationInfo(null)
@@ -313,7 +315,7 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
           </TouchableOpacity>
         </View>
       </View>
-      <View className="bg-white mb-8">
+      <View className="mb-8" style={{ backgroundColor: bgColor, borderColor: textColor, borderWidth: 1 }}>
         <View className="flex flex-row gap-4 py-4 px-2">
           <TouchableOpacity
             className="bg-orange-500 py-3 rounded-lg flex-1"

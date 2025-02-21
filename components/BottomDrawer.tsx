@@ -1,4 +1,5 @@
 // BottomDrawer.tsx
+import { useTheme } from "@/contaxtapis/ThemeContext";
 import React, {
   useState,
   useRef,
@@ -34,6 +35,7 @@ const BottomDrawer = forwardRef<BottomDrawerRef, Props>(
       new Animated.Value(Dimensions.get("window").height)
     ).current;
 
+    const {bgColor} = useTheme()
     // PanResponder for handling the drag down gesture on the header
     const panResponder = useRef(
       PanResponder.create({
@@ -155,7 +157,7 @@ const BottomDrawer = forwardRef<BottomDrawerRef, Props>(
                 <ScrollView
                  showsVerticalScrollIndicator={false}
                  keyboardShouldPersistTaps="handled" // or "always"
-                className="pt-10"
+                className="pt-10 " style={{ backgroundColor: bgColor }}
               // contentContainerStyle={{ paddingBottom: 20 }}
             >
                   {children}

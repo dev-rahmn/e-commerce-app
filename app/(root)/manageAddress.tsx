@@ -7,6 +7,7 @@ import ManageAddressList from '@/components/ManageAddressList'
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import {  getAllAddresses, manageAddress, updateSelectedDeliveryAddressAsync } from "@/redux/slices/addressSlice";
 import ManageAddressForm from '@/components/ManageAddressForm'
+import { useTheme } from '@/contaxtapis/ThemeContext'
 
 interface AddressProps {
     showAddAction: boolean;
@@ -19,7 +20,8 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
     const [isAddingAddress, setIsAddingAddress] = useState(false);
     const [address, setAddress] = useState<any | null>(null);
     const profile = useAppSelector((state) => state.auth.userProfile);
-
+  
+    const {bgColor, textColor} = useTheme()
     const manageAddressHandler = async (address: any) => {
         if (profile) {
           try {
@@ -70,7 +72,7 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
 
 
     return (
-        <View className="h-full ">
+        <View className="h-full " style={{ backgroundColor: bgColor }}>
             
                 {isAddingAddress ? (
                     <ManageAddressForm onSubmit={manageAddressHandler} address={address} onClose={() => {setIsAddingAddress(false), setAddress(null)}}/>
@@ -85,7 +87,7 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
                 }
             
         {(address && !isAddingAddress) && (
-           <View className="absolute bottom-0 left-0 right-0 bg-white p-2 gap-4 mb-10 flex flex-row justify-between border-t border-gray-300">
+           <View className={`absolute bottom-0 left-0 right-0 bg-${bgColor} p-2 gap-4 mb-10 flex flex-row justify-between border-t border-gray-300`}>
 
             <TouchableOpacity className="bg-orange-500 py-3 px-6 rounded-full flex-1"
              onPress={updateDeliveryAddressHandler}>

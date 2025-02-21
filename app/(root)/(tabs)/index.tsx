@@ -2,8 +2,9 @@ import DeliveryLocation from "@/components/DeliveryLocation";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
 import { isAdminUser } from "@/constants/utils";
+import { useTheme } from "@/contaxtapis/ThemeContext";
 import { useAppSelector } from "@/redux/store/hooks";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useMemo } from "react";
 import { Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,7 +18,7 @@ export default function Index() {
       (state) => state.address.selectedDeliveryAddress
     );
     
-
+    const {bgColor, textColor} = useTheme();
   function getGreeting() {
     const now = new Date();
     const hours = now.getHours();
@@ -32,21 +33,24 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView className="bg-white h-full">{/* greeting section */}
-      <View className="px-5"> 
+    <SafeAreaView className={`h-full `} style={{ backgroundColor: bgColor }}>{/* greeting section */}
+      <View className="px-2"> 
         <View className="flex flex-row items-center justify-between mt-5">
           <View className="flex flex-row items-center">
+            <TouchableOpacity  onPress={() =>router.push(`/profile`)}>
             <Image source={images.avatar} className="size-12 rounded-full" />
+
+            </TouchableOpacity>
             <View className="flex flex-col items-start ml-2 justify-center">
               <Text className="text-xs font-rubik-medium text-black-100">
                 {getGreeting()}
               </Text>
-              <Text className="text-xs font-rubik-medium text-black-300">
+              <Text className={`text-xs font-rubik-medium text-${textColor}`}>
                 {profile?.fullName}
               </Text>
             </View>
           </View>
-          <Image source={icons.bell} className="size-5" />
+          <Image source={icons.bell} className="size-5" tintColor={textColor}/>
         </View>
       </View>
     {selectedDeliveryAddress && !isAdmin && <DeliveryLocation />}

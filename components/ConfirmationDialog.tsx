@@ -1,3 +1,4 @@
+import { useTheme } from "@/contaxtapis/ThemeContext";
 import React from "react";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
 
@@ -17,6 +18,9 @@ interface Props {
 }
 
 const ConfirmationDialog = ({visible,title,message,onResult} : Props) => {
+  
+   const { bgColor, textColor } = useTheme();
+  
   return (
     <Modal
       animationType="slide"
@@ -24,8 +28,8 @@ const ConfirmationDialog = ({visible,title,message,onResult} : Props) => {
       visible={visible}
       onRequestClose={() => onResult(false)} // Handles Android back button
     >
-      <View className="flex-1 justify-center items-center bg-black/50">
-        <View className="w-6/6 h/5 bg-white rounded-lg p-6">
+      <View className={`flex-1 justify-center items-center rounded-lg bg-${bgColor}/50` }>
+        <View className={`w-6/6 h/5 bg-white rounded-lg p-6`}>
           <Text className="text-lg font-bold text-center mb-4">{title}</Text>
           {message && <Text className="text-base text-center mb-4">{message}</Text>}
           <View className="flex-row justify-between">

@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, SafeAreaView, ScrollView, Animated } from "react-native";
 import ManageAddress from "./manageAddress";
+import { useTheme } from "@/contaxtapis/ThemeContext";
 
 const OrderSummary = () => {
 
@@ -26,6 +27,7 @@ const OrderSummary = () => {
    const selectedDeliveryAddress = data
   const steps = ["Address", "Order Summary", "Payment"]; 
 
+  const { bgColor, textColor} = useTheme();
   useEffect(() => {  
     if(!data)  {
       setStep(1)
@@ -53,26 +55,32 @@ const OrderSummary = () => {
   }
  
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className=" h-full"   style={{ backgroundColor: bgColor }}>
       <View className="flex-1 ">
         
-        {step === 1 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
-            <TouchableOpacity onPress={() => {setStep(2)}} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
-              <Image source={icons.backArrow} className="size-6" />
+        {step === 1 && (<View className="flex flex-row mt-2 items-center gap-4 mx-4 pb-2">
+            <TouchableOpacity onPress={() => {setStep(2)}} className=" h-10 w-10 rounded-full flex items-center justify-center"
+            style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
+              >
+              <Image tintColor={textColor} source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
-            <Text className="text-xl font-rubik-base text-black-300 mt-2">Address </Text>  
+            <Text className={`text-xl font-rubik-base  mt-2 text-${textColor}`}>Address </Text>  
         </View>)}
-        {step === 2 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
-            <TouchableOpacity onPress={() => router.back()} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
-              <Image source={icons.backArrow} className="size-6" />
+        {step === 2 && (<View className="flex flex-row mt-2 items-center gap-4 mx-4 pb-2">
+            <TouchableOpacity onPress={() => router.back()} className=" h-10 w-10 rounded-full flex items-center justify-center"
+            style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
+              >
+              <Image tintColor={textColor} source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
-            <Text className="text-xl font-rubik-base text-black-300 mt-2">Order Summary</Text>  
+            <Text className={`text-xl font-rubik-base  mt-2 text-${textColor}`}>Order Summary</Text>  
         </View>)}
-        {step === 3 && (<View className="flex flex-row items-center gap-4 mx-4 pb-2">
-            <TouchableOpacity onPress={() => setStep(2)} className="bg-primary-200 h-10 w-10 rounded-full flex items-center justify-center">
-              <Image source={icons.backArrow} className="size-6" />
+        {step === 3 && (<View className="flex flex-row mt-2 items-center gap-4 mx-4 pb-2">
+            <TouchableOpacity onPress={() => setStep(2)} className=" h-10 w-10 rounded-full flex items-center justify-center"
+            style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
+              >
+              <Image tintColor={textColor} source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
-            <Text className="text-xl font-rubik-base text-black-300 mt-2">Payment</Text>  
+            <Text className={`text-xl font-rubik-base  mt-2 text-${textColor}`}>Payment</Text>  
         </View>)}
 
         {/* Step Indicator */}
@@ -117,7 +125,7 @@ const OrderSummary = () => {
           {/* Step 2: Order Summary */}
             {step === 2 && (
             <ScrollView 
-                className="bg-gray-100 px-2"  
+                className=" px-2"  style={{ backgroundColor: bgColor }}  
                 contentContainerStyle={{ paddingBottom: 180 }} 
                 showsVerticalScrollIndicator={false} 
                 keyboardShouldPersistTaps="handled"
@@ -211,11 +219,12 @@ const OrderSummary = () => {
 
           {/* Step 3: Payment Options */}
           {step === 3 && (
-            <View>
-              <Text className="text-xl mb-3">Select Payment Method</Text>
+            <View className="px-4">
+              <Text className="text-xl mb-3 " style={{ color: textColor}}>Select Payment Method</Text>
               {["Wallet UPI", "Net Banking", "Cash on Delivery"].map((method, index) => (
-                <TouchableOpacity key={index} className="p-4 border rounded-md mb-3">
-                  <Text>{method}</Text>
+                <TouchableOpacity key={index} className="p-4 border rounded-md mb-3"
+                style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }} >
+                  <Text className="text-black" style={{ color: textColor }}>{method}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -225,7 +234,7 @@ const OrderSummary = () => {
       </View>
 
       {/* Back and Next Buttons */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white p-2 gap-4 flex flex-row justify-between border-t border-gray-300">
+      <View className="absolute bottom-0 left-0 right-0 p-2 gap-4 flex flex-row justify-between border-t border-gray-300"  style={{ backgroundColor: bgColor }}>
         {step > 2 && (
           <TouchableOpacity className="bg-primary-300 py-3 px-6 rounded-full flex-1 " onPress={handlePrevStep}>
             <Text className="text-white text-center">Back</Text>

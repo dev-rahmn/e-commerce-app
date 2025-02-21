@@ -4,6 +4,7 @@ import icons from "@/constants/icons";
 import BottomDrawer, { BottomDrawerRef } from "./BottomDrawer";
 import ManageAddress from "@/app/(root)/manageAddress";
 import { useAppSelector } from "@/redux/store/hooks";
+import { useTheme } from "@/contaxtapis/ThemeContext";
 
 const DeliveryLocation = () => {
   // Destructure the selectedDeliveryAddress state: data, loading, and error.
@@ -11,6 +12,8 @@ const DeliveryLocation = () => {
     (state) => state.address.selectedDeliveryAddress
   );
   const selectedDeliveryAddress = data;
+   // Get theme values from the context
+      const { bgColor, textColor } = useTheme();
   
   // Create a ref for BottomDrawer.
   const drawerRef = useRef<BottomDrawerRef>(null);
@@ -26,7 +29,7 @@ const DeliveryLocation = () => {
     if (loading) {
       return (
         <View className="py-2 rounded-lg flex-row items-center justify-center mt-2 border border-dashed border-gray-300">
-          <Text className="text-base text-black font-rubik-light">
+          <Text className="text-base text-primary-300 font-rubik-light">
             Location is updating...
           </Text>
         </View>
@@ -56,13 +59,13 @@ const DeliveryLocation = () => {
             </Text>
           </View>
           <Text
-            className="text-base text-black font-rubik-light flex-1 mx-2"
+            className={`text-base text-${textColor} font-rubik-light flex-1 mx-2`}
             numberOfLines={1}
             ellipsizeMode="tail"
           >
             {buildingName}, {roadName}
           </Text>
-          <Image source={icons.rightArrow} className="w-5 h-5" />
+          <Image source={icons.rightArrow} className="w-5 h-5" tintColor={textColor}/>
         </View>
       );
     } else {
