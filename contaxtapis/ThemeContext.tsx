@@ -1,6 +1,6 @@
-// ThemeContext.tsx
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Appearance } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type Theme = "light" | "dark";
 
@@ -22,24 +22,40 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export const ThemeProvider = ({ children } : ThemeProviderProps) => {
-  // Initialize using the system color scheme
-  const systemTheme = Appearance.getColorScheme() || "light";
-  const [theme, setTheme] = useState<Theme>(systemTheme as Theme);
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    // Listen for changes to the system theme
+    // Load stored theme from AsyncStorage
+    const loadTheme = async () => {
+      const storedTheme = await AsyncStorage.getItem("theme");
+      if (storedTheme) {
+        setTheme(storedTheme as Theme);
+      } else {
+        // If no theme is stored, use system theme
+        const systemTheme = Appearance.getColorScheme() || "light";
+        setTheme(systemTheme as Theme);
+      }
+    };
+    loadTheme();
+  }, []);
+
+  useEffect(() => {
+    // Listen for system theme changes
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       setTheme(colorScheme === "dark" ? "dark" : "light");
     });
     return () => subscription.remove();
   }, []);
 
-  const toggleTheme = () =>
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  const toggleTheme = async () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    await AsyncStorage.setItem("theme", newTheme); // Save theme in AsyncStorage
+  };
 
-  const bgColor = theme === "light" ? "white" : "black";    // white : black
-  const textColor = theme === "light" ? "black" : "white";  // black : white
+  const bgColor = theme === "light" ? "white" : "black";  
+  const textColor = theme === "light" ? "black" : "white";  
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, bgColor, textColor }}>

@@ -21,7 +21,6 @@ export default function RootLayout() {
     "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
   });
 
-  
   // Animated values for fade, scale, and vertical translation.
   const fadeAnim = useRef(new Animated.Value(0)).current; // starts at opacity 0
   const scaleAnim = useRef(new Animated.Value(0.8)).current; // starts smaller
@@ -56,7 +55,7 @@ export default function RootLayout() {
   // While fonts (or other assets) are loading, display the loader animation.
   if (!fontsLoaded) {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1}}>
         <CustomSplash />
       </SafeAreaView>
     );
