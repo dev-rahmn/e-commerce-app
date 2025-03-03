@@ -107,10 +107,13 @@ import { useTheme } from "@/contaxtapis/ThemeContext";
           
         </View>
             {/* Theme Toggle Section */}
-            <View className="flex flex-row items-center justify-between border-t border-gray-200 pt-2">
-      <Text className={`text-xl font-rubik-semibold text-${textColor}`}>
-        Theme
-      </Text>
+          <View className="flex flex-row items-center justify-between border-t border-gray-200 pt-2">
+            <View className="flex flex-row items-center gap-3">
+              <Image source={icons.theme} className="size-5" tintColor={textColor} />
+            <Text className={`text-xl font-rubik-semibold text-${textColor}`}>
+              Theme
+            </Text>
+            </View>
       <TouchableOpacity
         onPress={toggleTheme}
         className={`px-4 py-2 rounded-lg ${theme === "light" ? "bg-gray-300" : "bg-gray-700"}`}

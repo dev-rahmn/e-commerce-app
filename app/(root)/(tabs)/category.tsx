@@ -103,9 +103,7 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
   };
 
   return (
-    <SafeAreaView className="h-full" style={{ backgroundColor: bgColor }}
-    
-    >
+    <SafeAreaView className="h-full" style={{ backgroundColor: bgColor }}>
       <View className="px-4 py-2 flex flex-row  items-center justify-between">
         <TouchableOpacity style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
           onPress={() => router.back()}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
@@ -8,7 +8,7 @@ import { router } from 'expo-router';
 import icons from '@/constants/icons';
 
 const ProfileDetails = () => {
-    const { bgColor, textColor } = useTheme();
+    const { bgColor, textColor,theme } = useTheme();
     const profile = useAppSelector((state) => state.auth.userProfile);
 
     const rotate = useSharedValue(0);
@@ -24,6 +24,10 @@ const ProfileDetails = () => {
         setFlipped(!flipped);
     };
 
+
+    useEffect(() =>{
+            flipCard();
+    },[profile])
     // Card Animation
     const cardStyle = useAnimatedStyle(() => ({
         transform: [{ rotateY: `${rotate.value}deg` }, { scale: scale.value }],
@@ -47,15 +51,30 @@ const ProfileDetails = () => {
 
             {/* Flip Card with More Height & 360° Rotation */}
             <TouchableWithoutFeedback onPress={flipCard}>
-                <Animated.View 
-                    className="w-80 h-64 bg-blue-500 rounded-2xl items-center justify-center p-6 shadow-lg"
-                    style={cardStyle}
+            <Animated.View 
+                className="w-80 h-64 bg-blue-400 rounded-2xl items-center justify-center p-6"
+                style={[
+                    cardStyle,
+                    {
+                    // Conditionally set the shadow color based on the theme
+                    shadowColor: bgColor === 'back' ? 'green' : 'gray',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.5,
+                    shadowRadius: 4,
+                    elevation: 5, // For Android shadow
+                    },
+                ]}
                 >
-                    <Image source={{ uri: 'https://via.placeholder.com/100' }} className="size-20 rounded-full" />
-                    <Text className="text-xl font-bold text-white mt-3">{profile?.fullName || "User Name"}</Text>
-                    <Text className="text-sm text-gray-200">Email: {profile?.email}</Text>
-                    <Text className="text-sm text-gray-200">User ID: {profile?.userId}</Text>
-                    <Text className="text-sm text-gray-200">Type: {profile?.type}</Text>
+                <Image 
+                    source={{ uri: 'https://via.placeholder.com/100https://img.freepik.com/free-vector/smiling-redhaired-boy-illustration_1308-175803.jpg' }} 
+                    className="size-20 rounded-full" 
+                />
+                <Text className="text-xl font-bold text-white mt-3">
+                    {profile?.fullName || "User Name"}
+                </Text>
+                <Text className="text-sm text-gray-200">Email: {profile?.email}</Text>
+                <Text className="text-sm text-gray-200">User ID: {profile?.userId}</Text>
+                <Text className="text-sm text-gray-200">Type: {profile?.type}</Text>
                 </Animated.View>
             </TouchableWithoutFeedback>
         </SafeAreaView>

@@ -234,7 +234,8 @@ const OrderSummary = () => {
       </View>
 
       {/* Back and Next Buttons */}
-      <View className="absolute bottom-0 left-0 right-0 p-2 gap-4 flex flex-row justify-between border-t border-gray-300"  style={{ backgroundColor: bgColor }}>
+      {(step == 2 || step == 3 ) && (
+        <View className="absolute bottom-0 left-0 right-0 p-2 gap-4 flex flex-row justify-between border-t border-gray-300"  style={{ backgroundColor: bgColor }}>
         {step > 2 && (
           <TouchableOpacity className="bg-primary-300 py-3 px-6 rounded-full flex-1 " onPress={handlePrevStep}>
             <Text className="text-white text-center">Back</Text>
@@ -253,6 +254,8 @@ const OrderSummary = () => {
         )}
         
       </View>
+      )}
+      
     </SafeAreaView>
   );
 };

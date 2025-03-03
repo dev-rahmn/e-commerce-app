@@ -40,6 +40,7 @@ import editLogo from '@/assets/icons/editProperty.png';
 import addImage from '@/assets/icons/addImage.png';
 import work from "@/assets/icons/work.png";
 import address from "@/assets/icons/addressBook.png";
+import theme from "@/assets/icons/theme.png";
 export default {
   google,
   home,
@@ -82,5 +83,6 @@ export default {
   editLogo,
   addImage,
   work,
-  address
+  address,
+  theme
 };

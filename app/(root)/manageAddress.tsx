@@ -87,7 +87,7 @@ const ManageAddress = ({showAddAction = true, disableScroll = false, onDeliverHa
                 }
             
         {(address && !isAddingAddress) && (
-           <View className={`absolute bottom-0 left-0 right-0 bg-${bgColor} p-2 gap-4 mb-10 flex flex-row justify-between border-t border-gray-300`}>
+           <View className={`absolute bottom-0 left-0 right-0 bg-${bgColor} p-2 gap-4 mb-8 flex flex-row justify-between border-t border-gray-300`}>
 
             <TouchableOpacity className="bg-orange-500 py-3 px-6 rounded-full flex-1"
              onPress={updateDeliveryAddressHandler}>

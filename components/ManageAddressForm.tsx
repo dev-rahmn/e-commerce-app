@@ -15,6 +15,7 @@ import { router } from 'expo-router';
 import * as Location from 'expo-location';
 import icons from '@/constants/icons';
 import { useTheme } from '@/contaxtapis/ThemeContext';
+import CustomInput from './CustomInput';
 
 interface ManageAddressFormProps {
   onSubmit: (data: any) => void;
@@ -39,7 +40,8 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationInfo, setLocationInfo] = useState<any>(null);
 
-
+    const {bgColor, textColor} = useTheme()
+      
   const showToast = () => {
     ToastAndroid.showWithGravityAndOffset(
       'It take while, you may fill your Name and Phone No',
@@ -108,7 +110,6 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
     onClose();
   };
 
-  const {bgColor, textColor} = useTheme();
   // Function to get location and show the modal
   const getUserLocation = async () => {
     setLocationInfo(null)
@@ -165,36 +166,40 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
   };
 
   return (
-    <ScrollView className="pb-32"
-    keyboardShouldPersistTaps="handled" // or "always"
-    >
-      <View className="px-2">
-        <View className="flex flex-row px-2 items-center justify-between">
-          <Text className="text-xl font-bold my-4">
-            {address ? 'Update' : 'Add'} Delivery Address
-          </Text>
-          <TouchableOpacity
-            className="items-center py-1 px-2 justify-center border border-red-500 rounded-lg"
-            onPress={closeHandler}
-          >
-            <Text className="text-red-600">X</Text>
-          </TouchableOpacity>
-        </View>
+  <SafeAreaView className='flex-1 h-full' style={{ backgroundColor: bgColor }}>
 
+              <ScrollView 
+                contentContainerStyle={{ justifyContent: 'center' }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                <View className='px-1 mt-3'>
+                  <View className="flex flex-row px-2 items-center justify-between">
+                      <Text className="text-xl font-bold my-4" style={{color: textColor}}>
+                        {address ? 'Update' : 'Add'} Delivery Address
+                      </Text>
+                      <TouchableOpacity
+                        className="items-center py-1 px-2 justify-center border border-red-500 rounded-lg"
+                        onPress={closeHandler}
+                      >
+                        <Text className="text-red-600">X</Text>
+                      </TouchableOpacity>
+                    </View>
+                </View>
+
+      <View className="px-2">
         {/* Full Name */}
-        <Text className="text-gray-600 mb-1">Full Name (Required) *</Text>
-        <TextInput
-          className="border border-gray-300 p-3 rounded-md mb-3"
+        <CustomInput required labelColor={textColor}
+          label="Full Name"
           value={name}
           onChangeText={setName}
-          placeholder="Full Name"
+          placeholder="Enter Full Name"
         />
 
         {/* Phone Number */}
-        <Text className="text-gray-600 mb-1">Phone Number (Required) *</Text>
-        <TextInput
-          className="border border-gray-300 p-3 rounded-md mb-3"
-          placeholder="Phone Number"
+         <CustomInput required labelColor={textColor}
+          label="Phone Number"
+          placeholder="Enter Phone Number"
           keyboardType="phone-pad"
           value={phone}
           onChangeText={setPhone}
@@ -203,17 +208,16 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
         {/* Pincode & State */}
         <View className="flex-row gap-2 justify-between mr-2">
           <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">Pincode *</Text>
-            <TextInput
-              className="border border-gray-300 p-3 rounded-md"
+            <CustomInput required labelColor={textColor}
+            label='Pincode'
+              placeholder="Enter Pincode"
               value={pincode}
               onChangeText={setPincode}
             />
           </View>
           <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">State *</Text>
-            <TextInput
-              className="border border-gray-300 p-3 rounded-md"
+          <CustomInput required labelColor={textColor} label='State' 
+              placeholder="Enter State"
               value={stateValue}
               onChangeText={setStateValue}
             />
@@ -223,21 +227,19 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
         {/* City & Location */}
         <View className="flex-row gap-2 justify-between mr-2">
           <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">City *</Text>
-            <TextInput
-              className="border border-gray-300 p-3 rounded-md"
+          <CustomInput labelColor={textColor} required label='City'
+              placeholder="Enter City" 
               value={city}
               onChangeText={setCity}
             />
           </View>
           <View className="w-1/2">
-            <Text className="text-gray-600 mb-1">Location *</Text>
+            <Text className={`text-${textColor}  font-rubik-medium mb-2`}>Location</Text>
             <TouchableOpacity
               className={`${locationLoading ? 'bg-gray-200 border border-blue-600' : 'bg-blue-600'}  p-3 rounded-md mb-3`}
               onPress={getUserLocation}
               disabled = {locationLoading}
             >
-
               {locationLoading ? (
                 <View className='flex flex-row items-center justify-start'>
                 <ActivityIndicator size="small" color='blue'/>
@@ -253,26 +255,24 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
         </View>
 
         {/* Address Details */}
-        <Text className="text-gray-600 mb-1">House No., Building Name *</Text>
-        <TextInput
-          className="border border-gray-300 p-3 rounded-md mb-3"
+    
+        <CustomInput labelColor={textColor} required label='House No., Building Name'
+        placeholder='Enter House No., Building Name'
           value={buildingName}
           onChangeText={setBuildingName}
         />
-
-        <Text className="text-gray-600 mb-1">Road name, Area, Colony *</Text>
-        <TextInput
-          className="border border-gray-300 p-3 rounded-md mb-3"
+        <CustomInput labelColor={textColor} required label='Road name, Area, Colony'
+        placeholder='Enter Road name, Area, Colony'
           value={roadName}
           onChangeText={setRoadName}
         />
 
         {/* Address Type Selection */}
-        <Text className="text-gray-600 mb-1">Type of Address :</Text>
+        <Text className={`text-${textColor}  font-rubik-medium mb-1`}>Type of Address :</Text>
         <View className="flex-row gap-2 my-2 w-1/2">
           <TouchableOpacity
-            className={`flex-1 py-1 px-4 border rounded-lg ${
-              selectedType === 'home' ? 'border-blue-600 border-2' : 'border-black'
+            className={`flex-1 py-1 px-4 border-2 rounded-lg ${
+              selectedType === 'home' ? 'border-blue-600 ' : `border-${textColor}`
             }`}
             onPress={() => setSelectedType('home')}
           >
@@ -284,7 +284,7 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
               />
               <Text
                 className={`${
-                  selectedType === 'home' ? 'text-blue-600' : 'text-black'
+                  selectedType === 'home' ? 'text-blue-600' : `text-${textColor}`
                 } text-center font-rubik-semibold`}
               >
                 Home
@@ -293,8 +293,8 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`flex-1 py-1 px-4 border rounded-lg ${
-              selectedType === 'work' ? 'border-blue-600 border-2' : 'border-black'
+            className={`flex-1 py-1 px-4 border-2  rounded-lg ${
+              selectedType === 'work' ? 'border-blue-600 ' : `border-${textColor}`
             }`}
             onPress={() => setSelectedType('work')}
           >
@@ -306,7 +306,7 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
               />
               <Text
                 className={`${
-                  selectedType === 'work' ? 'text-blue-600' : 'text-black'
+                  selectedType === 'work' ? 'text-blue-600' : `text-${textColor}`
                 } text-center font-rubik-semibold`}
               >
                 Work
@@ -315,8 +315,8 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
           </TouchableOpacity>
         </View>
       </View>
-      <View className="mb-8" style={{ backgroundColor: bgColor, borderColor: textColor, borderWidth: 1 }}>
-        <View className="flex flex-row gap-4 py-4 px-2">
+     
+        <View className="flex flex-row gap-4 py-4 px-2 pb-14">
           <TouchableOpacity
             className="bg-orange-500 py-3 rounded-lg flex-1"
             onPress={handleManageAddress}
@@ -332,7 +332,7 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
             <Text className="text-white text-center font-bold">Cancel</Text>
           </TouchableOpacity>
         </View>
-      </View>
+     
 
       {/* Modal for location confirmation */}
       <Modal
@@ -387,6 +387,7 @@ const ManageAddressForm = ({ onSubmit, address, onClose }: ManageAddressFormProp
         </View>
       </Modal>
     </ScrollView>
+  </SafeAreaView>
   );
 };
 

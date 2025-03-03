@@ -9,6 +9,7 @@ import { fetchOrderDetail } from '@/redux/slices/orderSlice';
 import { RootState } from '@/redux/store/store';
 import { isAdminUser } from '@/constants/utils';
 import Loading from '@/utils/Loading';
+import { useTheme } from '@/contaxtapis/ThemeContext';
 
 const getTrackingSteps = (currentStatus: string) => {
   const currentIndex = allTrackingSteps.findIndex(step => step.label === currentStatus);
@@ -64,6 +65,7 @@ const orderDetails = useAppSelector((state: RootState) => state.order.orderDetai
     const isAdmin = useMemo(() => isAdminUser(token), [token]);
     const { loading, error, data}  = orderDetails;
 
+  const {bgColor, textColor} = useTheme()
 
 const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
   useEffect(() => {
@@ -109,33 +111,34 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
   }, [trackingSteps]);
 
 
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center ">
-        <Loading />
-      </View>
-    );
-  }
-  
-  if (error) {
-    return (
-      <View className="flex-1 items-center justify-center mt-24">
-        <Text className="text-red-500 text-lg font-semibold">Something went wrong! Please try again.</Text>
-      </View>
-    );
-  }
+ if (loading) {
+          return (
+            <View className="flex-1 items-center justify-center "  style={{ backgroundColor: bgColor }}>
+              <Loading />
+            </View>
+          );
+        }
+        
+        if (error) {
+          return (
+            <View className="flex-1 items-center justify-center mt-24"   style={{ backgroundColor: bgColor }}>
+              <Text className="text-red-500 text-lg font-semibold">Something went wrong! Please try again.</Text>
+            </View>
+          );
+        }  
 
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <View className="px-4 py-2 flex flex-row items-center justify-between border-b border-gray-200">
-        <TouchableOpacity onPress={() => router.back()} className="bg-primary-100 h-10 w-10 rounded-full flex items-center justify-center">
-          <Image source={icons.backArrow} className="size-6" />
+      <View className="px-4 py-2 flex flex-row items-center justify-between border-b border-gray-200" style={{ backgroundColor: bgColor }}>
+        <TouchableOpacity onPress={() => router.back()} style={{ borderColor: textColor, borderWidth: 1,opacity: 0.5 }}
+         className=" h-10 w-10 rounded-full flex items-center justify-center">
+          <Image source={icons.backArrow} className="size-6" tintColor={textColor}/>
         </TouchableOpacity>
-        <Text className="text-lg font-bold">{id}</Text>
+        <Text className="text-lg font-bold" style={{ color: textColor }}>{id}</Text>
       </View>
 
-      <View className="mt-5 px-5">
+      <View className="mt-5 p-5 bg-gray-100 border border-gray-200 mx-3 rounded-lg">
         <Text className="text-lg font-semibold mb-2">Order Information:</Text>
         <Text className="text-base text-gray-700">Product Name: {data?.productName}</Text>
         <Text className="text-base text-gray-700 my-2">Quantity: {data?.quantity}</Text>
@@ -227,7 +230,7 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
       
       {/* Action Buttons */}
 
-      <View className="absolute bottom-0 left-0 right-0 bg-white px-2  flex flex-row justify-between border-t border-gray-300">
+      <View className="absolute bottom-0 left-0 right-0 px-2  flex flex-row justify-between border-t border-gray-300" style={{ backgroundColor: bgColor }}>
             {statusFlag === null && isAdmin ? (
               <>
               {/* Cancel Button  for admin*/}

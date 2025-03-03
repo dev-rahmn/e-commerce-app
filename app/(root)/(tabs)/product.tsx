@@ -11,13 +11,14 @@ import icons from '@/constants/icons'
 import { categories } from '@/constants/data';
 import AddProductModal from '@/modals/AddProductModal'
 import DeleteModal from '@/modals/DeleteModal'
+import { useTheme } from '@/contaxtapis/ThemeContext'
 
 const Product = () => {
   const [modalVisible, setModalVisible] = useState(false);
     const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
     const [updatedProduct, setUpdatedProduct] = useState(null);
     const [selectedId, setSelectedId] = useState<number | null>(null); // Store ID of selected item
-  
+      const {bgColor, textColor} = useTheme();
     const loading = false
     const isAdmin = true
       // Get the selected category from URL params
@@ -79,14 +80,15 @@ const Product = () => {
       }
     };
   return (
-      <SafeAreaView className='bg-white h-full'>
+      <SafeAreaView className='h-full'  style={{ backgroundColor: bgColor }}>
           <View className='px-4 py-2 flex flex-row  items-center justify-between'>
-            <TouchableOpacity onPress={() => router.back()} 
-            className='bg-primary-100 h-10 w-10  rounded-full flex items-center justify-center '>
-              <Image source={icons.backArrow} className="size-6" />  
+             <TouchableOpacity style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
+                onPress={() => router.back()}
+                className=" h-10 w-10  rounded-full flex items-center justify-center">
+                <Image source={icons.backArrow} className="size-6" tintColor={textColor}/>
             </TouchableOpacity>
 
-            <Text className='text-xl font-rubik-medium  text-black-300 mt-2'>
+            <Text className='text-xl font-rubik-medium mt-2' style={{ color: textColor }}>
               {isAdmin ? 'Product Management' : 'Product List'}
               </Text>
            

@@ -45,10 +45,10 @@ const Property = () => {
            
             )}
           />
-          <Image
+          {/* <Image 
             source={images.whiteGradient}
             className="absolute top-0 w-full z-40"
-          />
+          /> */}
 
           <View
             className="z-50 absolute inset-x-7"
@@ -56,7 +56,8 @@ const Property = () => {
               top: Platform.OS === "ios" ? 70 : 20,
             }}
           >
-            <View className="flex flex-row items-center w-full justify-between">
+             {/* header row */}
+            <View className="flex flex-row items-center w-full justify-between">  
               <TouchableOpacity
                 onPress={() => router.push('/product')}
                 className="flex flex-row bg-primary-200 rounded-full size-11 items-center justify-center"
@@ -102,29 +103,31 @@ const Property = () => {
               <Text className="text-xs font-rubik text-black-100">4.4</Text>
             </View>
           </View>
-
+        </View>
           {/* Description Section */}
+
+        <View className='px-5'>
           <Text className="text-md font-rubik-medium text-black-100 mt-4">
             This cozy studio is located in the heart of New York, featuring modern amenities and a stylish interior. Perfect for a comfortable stay!
           </Text>
-
+        </View>
           {/* Additional Property Features */}
-          <View className="mt-4">
+          <View className="mt-4 px-5 ">
               <Text className="text-lg font-rubik-bold">Additional Features</Text>
-              <Text className="text-sm font-rubik text-black-100">
+              <Text className="text-sm font-rubik ">
                 - 2 Bedrooms
               </Text>
-              <Text className="text-sm font-rubik text-black-100">
+              <Text className="text-sm font-rubik ">
                 - 1 Bathroom
               </Text>
-              <Text className="text-sm font-rubik text-black-100">
+              <Text className="text-sm font-rubik ">
                 - Fully Furnished
               </Text>
-              <Text className="text-sm font-rubik text-black-100">
+              <Text className="text-sm font-rubik ">
                 - High-Speed Internet
               </Text>
             </View>
-        </View>
+        
       </ScrollView>   
 
       {/* Bottom Buy Now Section */}

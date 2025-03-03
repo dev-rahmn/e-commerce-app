@@ -158,7 +158,7 @@ const BottomDrawer = forwardRef<BottomDrawerRef, Props>(
                  showsVerticalScrollIndicator={false}
                  keyboardShouldPersistTaps="handled" // or "always"
                 className="pt-10 " style={{ backgroundColor: bgColor }}
-              // contentContainerStyle={{ paddingBottom: 20 }}
+               contentContainerStyle={{ paddingBottom: 10 }}
             >
                   {children}
                 </ScrollView>

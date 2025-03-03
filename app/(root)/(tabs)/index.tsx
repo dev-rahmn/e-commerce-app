@@ -4,13 +4,15 @@ import images from "@/constants/images";
 import { isAdminUser } from "@/constants/utils";
 import { useTheme } from "@/contaxtapis/ThemeContext";
 import { useAppSelector } from "@/redux/store/hooks";
+import { useFocusEffect } from "@react-navigation/native";
 import { Link, router } from "expo-router";
-import { useMemo } from "react";
-import { Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Text, View, Image, ScrollView, TouchableOpacity, BackHandler, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
 
+  const [backPressedOnce, setBackPressedOnce] = useState(false);
   const profile = useAppSelector((state) => state.auth.userProfile);
      const token = useAppSelector((state) => state.auth.token);
       const isAdmin = useMemo(() => isAdminUser(token), [token]);
@@ -19,6 +21,30 @@ export default function Index() {
     );
     
     const {bgColor, textColor} = useTheme();
+
+    useFocusEffect(
+      useCallback(() => {
+        const backAction = () => {
+          if (backPressedOnce) {
+            BackHandler.exitApp();
+            return true;
+          }
+  
+          setBackPressedOnce(true);
+          ToastAndroid.show("Press back again to exit", ToastAndroid.SHORT);
+  
+          setTimeout(() => {
+            setBackPressedOnce(false);
+          }, 2000);
+  
+          return true;
+        };
+  
+        const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+  
+        return () => backHandler.remove();
+      }, [backPressedOnce])
+    );
   function getGreeting() {
     const now = new Date();
     const hours = now.getHours();
@@ -33,7 +59,7 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView className={`h-full `} style={{ backgroundColor: bgColor }}>{/* greeting section */}
+    <SafeAreaView className="h-full" style={{ backgroundColor: bgColor }}>{/* greeting section */}
       <View className="px-2"> 
         <View className="flex flex-row items-center justify-between mt-5">
           <View className="flex flex-row items-center">
@@ -54,7 +80,10 @@ export default function Index() {
         </View>
       </View>
     {selectedDeliveryAddress && !isAdmin && <DeliveryLocation />}
-      <ScrollView className="h-full px-5" showsVerticalScrollIndicator={false}>
+      <ScrollView 
+       contentContainerClassName="pb-24 px-4"
+       showsVerticalScrollIndicator={false}
+       >
         {/* Quick Actions */}
         <View className="mt-6 flex flex-row gap-2 justify-between">
           <TouchableOpacity className="bg-blue-500 p-4 rounded-lg w-1/3 items-center">
