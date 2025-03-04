@@ -65,8 +65,12 @@ const orderDetails = useAppSelector((state: RootState) => state.order.orderDetai
     const isAdmin = useMemo(() => isAdminUser(token), [token]);
     const { loading, error, data}  = orderDetails;
 
-  const {bgColor, textColor} = useTheme()
-
+     const { textColor, bgColor, theme } = useTheme();
+  
+        const desTextColor = useMemo(() => theme === 'light' ? 'text-black-100' : 'text-gray-400', [theme]);
+        const normalTextColor = useMemo(() => theme === 'light' ? 'text-black' : 'text-white', [theme]);
+        const detailBgColor = useMemo(() => theme === 'light' ? 'bg-gray-200' : 'bg-black-300', [theme]);
+  
 const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
   useEffect(() => {
     if(id) dispatch(fetchOrderDetail(id))
@@ -129,30 +133,30 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
 
 
   return (
-    <SafeAreaView className="bg-white h-full">
-      <View className="px-4 py-2 flex flex-row items-center justify-between border-b border-gray-200" style={{ backgroundColor: bgColor }}>
+    <SafeAreaView className="h-full" style={{ backgroundColor: bgColor }}>
+      <View className="px-4 py-2 mt-5 flex flex-row items-center justify-between border-b border-gray-200" style={{ backgroundColor: bgColor }}>
         <TouchableOpacity onPress={() => router.back()} style={{ borderColor: textColor, borderWidth: 1,opacity: 0.5 }}
          className=" h-10 w-10 rounded-full flex items-center justify-center">
           <Image source={icons.backArrow} className="size-6" tintColor={textColor}/>
         </TouchableOpacity>
-        <Text className="text-lg font-bold" style={{ color: textColor }}>{id}</Text>
+        <Text className="text-lg font-bold" style={{ color: textColor }}>{id ?? ''}</Text>
       </View>
 
-      <View className="mt-5 p-5 bg-gray-100 border border-gray-200 mx-3 rounded-lg">
-        <Text className="text-lg font-semibold mb-2">Order Information:</Text>
-        <Text className="text-base text-gray-700">Product Name: {data?.productName}</Text>
-        <Text className="text-base text-gray-700 my-2">Quantity: {data?.quantity}</Text>
-        <Text className="text-base text-gray-700">Total Price: ₹{data?.productPrice}</Text>
+      <View className={`mt-5 p-5 border border-gray-200 mx-3 rounded-lg ${detailBgColor}`}>
+        <Text className={`text-xl font-rubik-bold ${normalTextColor}`}>Order Information:</Text>
+        <Text className={`text-sm font-rubik ${normalTextColor}`} >Product Name: {data?.productName}</Text>
+        <Text className={`text-sm font-rubik my-2 ${normalTextColor}`} >Quantity: {data?.quantity}</Text>
+        <Text className={`text-sm font-rubik ${normalTextColor}`} >Total Price: ₹{data?.productPrice}</Text>
       </View>
 
       {isAdmin && (
         <View className="flex flex-col my-3 px-3">
           <TouchableOpacity onPress={toggleCustomerInfo}>
             <View className="py-3 px-2 flex flex-row items-center justify-between border rounded-lg border-gray-200">
-              <Text className="text-lg font-semibold">
+              <Text className="text-lg font-semibold" style={{ color: textColor }}>
                 Customer Information
               </Text>
-              <Text className="text-lg font-semibold">
+              <Text className="text-lg font-semibold" style={{ color: textColor }}>
                 {expanded ? "▲" : "▼"}
               </Text>
             </View>
@@ -180,7 +184,7 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
       )}
 
       <ScrollView contentContainerClassName="p-5 pb-32">
-        <Text className="text-xl font-semibold my-4 ">Order Status Steps</Text>
+        <Text className="text-xl font-semibold my-4 " style={{ color: textColor }}>Order Status Steps</Text>
 
         <View className="mt-2">
           {trackingSteps.map((step, index) => (

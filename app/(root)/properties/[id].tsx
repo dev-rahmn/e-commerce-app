@@ -6,6 +6,7 @@ import icons from '@/constants/icons';
 import images from '@/constants/images';
 import { useAppSelector } from '@/redux/store/hooks';
 import { isAdminUser } from '@/constants/utils';
+import {useTheme} from '@/contaxtapis/ThemeContext';
 
 const Property = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -14,15 +15,21 @@ const Property = () => {
     const token = useAppSelector((state) => state.auth.token);
       const isAdmin = useMemo(() => isAdminUser(token), [token]);
   
- const data =[
-  { id: 1, image: images.onboarding },
-  { id: 2, image: images.japan },
-  { id: 3, image: images.home },
-  { id: 4, image: images.noResult },
-]
+      const { textColor, bgColor, theme } = useTheme();
+
+      const desTextColor = useMemo(() => theme === 'light' ? 'text-black-100' : 'text-gray-400', [theme]);
+      const normalTextColor = useMemo(() => theme === 'light' ? 'text-black' : 'text-white', [theme]);
+      const detailBgColor = useMemo(() => theme === 'light' ? 'bg-gray-200' : 'bg-black-300', [theme]);
+
+    const data =[
+      { id: 1, image: images.onboarding },
+      { id: 2, image: images.japan },
+      { id: 3, image: images.home },
+      { id: 4, image: images.noResult },
+    ]
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1" style={{ backgroundColor: bgColor }}>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-32"
@@ -32,7 +39,7 @@ const Property = () => {
           <FlatList
            showsHorizontalScrollIndicator={true}
             data={data}
-            horizontal
+            horizontal 
             keyExtractor={(item) => item.id.toString()}
             // contentContainerStyle={{ paddingHorizontal: 10 }} // add this line
             renderItem={({ item,index }) => (
@@ -62,7 +69,7 @@ const Property = () => {
                 onPress={() => router.push('/product')}
                 className="flex flex-row bg-primary-200 rounded-full size-11 items-center justify-center"
               >
-                <Image source={icons.backArrow} className="size-5" />
+                <Image source={icons.backArrow} className="size-5" tintColor={textColor}/>
               </TouchableOpacity>
 
               <View className="flex flex-row items-center gap-3">
@@ -78,9 +85,9 @@ const Property = () => {
         </View>
 
         {/* Property Details Section */}
-        <View className="px-5 mt-5">
+        <View className={`p-5 mx-2 mt-5 rounded-lg ${detailBgColor}`}>
           <View className="flex flex-row items-center justify-between">
-            <Text className="text-xl font-rubik-bold">Cozy Studio</Text>
+            <Text className={`text-xl font-rubik-bold ${normalTextColor}`}>Cozy Studio</Text>
             <Image source={icons.chat} className="size-7" />
           </View>
           <View className="flex flex-row items-center justify-between mt-2">
@@ -88,7 +95,7 @@ const Property = () => {
               <Image
                 source={icons.location}
                 className="size-4"
-                tintColor={"#191D31"}
+                tintColor={textColor}
               />
               <Text className="text-xs font-rubik text-black-100">
                 22 W 33rd St, New York
@@ -98,7 +105,7 @@ const Property = () => {
               <Image
                 source={icons.star}
                 className="size-4"
-                tintColor={"#191D31"}
+                tintColor={textColor}
               />
               <Text className="text-xs font-rubik text-black-100">4.4</Text>
             </View>
@@ -107,23 +114,23 @@ const Property = () => {
           {/* Description Section */}
 
         <View className='px-5'>
-          <Text className="text-md font-rubik-medium text-black-100 mt-4">
+          <Text className={`text-md font-rubik-medium text-black-100 mt-4 ${desTextColor}`}>
             This cozy studio is located in the heart of New York, featuring modern amenities and a stylish interior. Perfect for a comfortable stay!
           </Text>
         </View>
           {/* Additional Property Features */}
           <View className="mt-4 px-5 ">
-              <Text className="text-lg font-rubik-bold">Additional Features</Text>
-              <Text className="text-sm font-rubik ">
+              <Text className={`text-lg font-rubik-bold ${normalTextColor}`}>Additional Features</Text>
+              <Text className={`text-sm font-rubik ${normalTextColor}`} >
                 - 2 Bedrooms
               </Text>
-              <Text className="text-sm font-rubik ">
+              <Text className={`text-sm font-rubik ${normalTextColor}`} >
                 - 1 Bathroom
               </Text>
-              <Text className="text-sm font-rubik ">
+              <Text className={`text-sm font-rubik ${normalTextColor}`} >
                 - Fully Furnished
               </Text>
-              <Text className="text-sm font-rubik ">
+              <Text className={`text-sm font-rubik ${normalTextColor}`} >
                 - High-Speed Internet
               </Text>
             </View>
@@ -131,10 +138,10 @@ const Property = () => {
       </ScrollView>   
 
       {/* Bottom Buy Now Section */}
-      <View className="absolute bg-white bottom-0 w-full rounded-t-2xl border-t border-r border-l border-primary-200 p-3 shadow-lg">
+      <View className="absolute  bottom-0 w-full rounded-t-2xl border-t  border-gray-200 p-3 shadow-lg" style={{ backgroundColor: bgColor }}>
         <View className="flex flex-row items-center justify-between gap-24">
           <View className="flex flex-col items-start">
-            <Text className="text-black-200 text-xs font-rubik-medium">
+            <Text className={`text-xs font-rubik-medium ${desTextColor}`}>
               Price
             </Text>
             <Text

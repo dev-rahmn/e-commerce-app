@@ -14,6 +14,8 @@ import { RootState } from '@/redux/store/store'
 import Loading from '@/utils/Loading'
 import { fetchOrders } from '@/redux/slices/orderSlice'
 import { useTheme } from '@/contaxtapis/ThemeContext'
+import SkeletonLoader from '@/components/CustomSkeleton'
+import { SkeletonOrderCard } from '@/skeletons'
 
 const Order = () => {
     const dispatch =  useAppDispatch()
@@ -23,11 +25,13 @@ const Order = () => {
 
    const {data,loading, error} = orders
 
-  useEffect(() =>{
-      if(profile?.userId){
-        dispatch(fetchOrders(profile.userId))
-      }
-  },[dispatch, profile])
+      useEffect(() =>{
+          if(profile?.userId){
+            dispatch(fetchOrders(profile.userId))
+          }
+      },[dispatch, profile])
+
+
 
       // Get the selected category from URL params
         const params = useLocalSearchParams();
@@ -41,22 +45,22 @@ const Order = () => {
         useEffect(() => {
           console.log('searched Item:', searchItem);
         }, [searchItem]);
-        const {bgColor, textColor} = useTheme()
+        const {bgColor, textColor , theme} = useTheme()
+
         if (loading) {
           return (
-            <View className="flex-1 items-center justify-center "  style={{ backgroundColor: bgColor }}>
-              <Loading />
-            </View>
+            <SafeAreaView className='h-full '   style={{ backgroundColor: bgColor }}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
+                
+              <SkeletonOrderCard className={`rounded-lg p-4 m-2 shadow ${theme === 'dark' ? 'bg-gray-800' : 'bg-black-200 shadow-black-100/70'}`} key={index}/>
+              ))}
+              </ScrollView>
+              
+            </SafeAreaView>
           );
         }
-        
-        if (error) {
-          return (
-            <View className="flex-1 items-center justify-center mt-24"   style={{ backgroundColor: bgColor }}>
-              <Text className="text-red-500 text-lg font-semibold">Something went wrong! Please try again.</Text>
-            </View>
-          );
-        }      
+             
   
   return (
     <SafeAreaView className='h-full'   style={{ backgroundColor: bgColor }}>
