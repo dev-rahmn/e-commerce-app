@@ -10,6 +10,7 @@ import { RootState } from '@/redux/store/store';
 import { isAdminUser } from '@/constants/utils';
 import Loading from '@/utils/Loading';
 import { useTheme } from '@/contaxtapis/ThemeContext';
+import {  SkeletonOrderDetailCard } from '@/skeletons';
 
 const getTrackingSteps = (currentStatus: string) => {
   const currentIndex = allTrackingSteps.findIndex(step => step.label === currentStatus);
@@ -115,14 +116,6 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
   }, [trackingSteps]);
 
 
- if (loading) {
-          return (
-            <View className="flex-1 items-center justify-center "  style={{ backgroundColor: bgColor }}>
-              <Loading />
-            </View>
-          );
-        }
-        
         if (error) {
           return (
             <View className="flex-1 items-center justify-center mt-24"   style={{ backgroundColor: bgColor }}>
@@ -142,6 +135,13 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
         <Text className="text-lg font-bold" style={{ color: textColor }}>{id ?? ''}</Text>
       </View>
 
+      {loading ?(
+        <ScrollView showsVerticalScrollIndicator={false} >
+
+          <SkeletonOrderDetailCard className={`rounded-lg h-full m-2  shadow ${theme === 'dark' ? 'bg-gray-800' : 'bg-black-200 shadow-black-100/70'}`}/>
+        </ScrollView>
+      ) : (
+        <>
       <View className={`mt-5 p-5 border border-gray-200 mx-3 rounded-lg ${detailBgColor}`}>
         <Text className={`text-xl font-rubik-bold ${normalTextColor}`}>Order Information:</Text>
         <Text className={`text-sm font-rubik ${normalTextColor}`} >Product Name: {data?.productName}</Text>
@@ -263,11 +263,13 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
             <Text className="text-white text-center font-semibold text-lg">Cancel</Text>
           </TouchableOpacity>
           ) : (
-            <View className={`${data?.status === "Delivered" ? "bg-green-700" : data.status === "Cancelled" ? "bg-red-700" : "bg-orange-700"} rounded-full my-2 flex-1 p-3 `}>
+            <View className={`${data?.status === "Delivered" ? "bg-green-700" : data?.status === "Cancelled" ? "bg-red-700" : "bg-orange-700"} rounded-full my-2 flex-1 p-3 `}>
             <Text className="text-center text-lg font-semibold text-white">Your order is {data?.status}</Text>
           </View>
           )}
       </View>
+      </>
+      )}
      
     </SafeAreaView>
   );

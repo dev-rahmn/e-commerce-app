@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {Card, FeaturedCard, OrderCard} from '@/components/Card'
 import { UIActivityIndicator } from 'react-native-indicators'
@@ -20,18 +20,32 @@ import { SkeletonOrderCard } from '@/skeletons'
 const Order = () => {
     const dispatch =  useAppDispatch()
     const profile = useAppSelector((state) => state.auth.userProfile);
+    const [refreshing, setRefreshing] = useState(false);
 
    const orders = useAppSelector((state: RootState) => state.order.orders)
 
    const {data,loading, error} = orders
 
-      useEffect(() =>{
-          if(profile?.userId){
-            dispatch(fetchOrders(profile.userId))
-          }
-      },[dispatch, profile])
-
-
+   const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Dispatch your fetchOrders action using the user's profile id.
+      // Adjust logic as needed if you want to refresh the orders list.
+      if (profile?.userId) {
+        await dispatch(fetchOrders(profile.userId));
+      }
+    } catch (error) {
+      console.error('Error refreshing orders:', error);
+    }
+    setRefreshing(false);
+  }, [dispatch, profile]);
+  
+   useEffect(() => {
+    // Check if a userId exists and no orders data is present
+    if (profile?.userId && (!data || data.length === 0)) {
+      dispatch(fetchOrders(profile.userId));
+    }
+  }, [dispatch, profile, data]);
 
       // Get the selected category from URL params
         const params = useLocalSearchParams();
@@ -47,19 +61,19 @@ const Order = () => {
         }, [searchItem]);
         const {bgColor, textColor , theme} = useTheme()
 
-        if (loading) {
-          return (
-            <SafeAreaView className='h-full '   style={{ backgroundColor: bgColor }}>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
+        // if (loading) {
+        //   return (
+        //     <SafeAreaView className='h-full '   style={{ backgroundColor: bgColor }}>
+        //       <ScrollView showsVerticalScrollIndicator={false}>
+        //         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
                 
-              <SkeletonOrderCard className={`rounded-lg p-4 m-2 shadow ${theme === 'dark' ? 'bg-gray-800' : 'bg-black-200 shadow-black-100/70'}`} key={index}/>
-              ))}
-              </ScrollView>
+        //       <SkeletonOrderCard className={`rounded-lg p-4 m-2 shadow ${theme === 'dark' ? 'bg-gray-800' : 'bg-black-200 shadow-black-100/70'}`} key={index}/>
+        //       ))}
+        //       </ScrollView>
               
-            </SafeAreaView>
-          );
-        }
+        //     </SafeAreaView>
+        //   );
+        // }
              
   
   return (
@@ -73,9 +87,21 @@ const Order = () => {
                   <Text className={`text-xl font-rubik-base mt-2 text-${textColor}`}>My Orders</Text>
               </View> 
                 <Image source={icons.bell} className="size-5" tintColor={textColor}/>
-          </View>    
+          </View>  
+
+          {loading ? (
+            <ScrollView showsVerticalScrollIndicator={false}>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
+            
+          <SkeletonOrderCard className={`rounded-lg p-4 m-2 shadow ${theme === 'dark' ? 'bg-gray-800' : 'bg-black-200 shadow-black-100/70'}`} key={index}/>
+          ))}
+          </ScrollView>
+          ) : (
+            
               <View className="px-2">
                 <FlatList 
+                refreshing={refreshing}
+                onRefresh={onRefresh}
                   contentContainerClassName='pb-24'
                   data={data}
                   renderItem={({item})=>             
@@ -94,6 +120,8 @@ const Order = () => {
                     }
                 />
               </View>
+          )}
+
     </SafeAreaView>
   )
 }
