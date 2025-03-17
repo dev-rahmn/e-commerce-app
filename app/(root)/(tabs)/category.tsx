@@ -25,9 +25,8 @@ const Category = () => {
 const dispatch = useAppDispatch();
 const {categories, loading, error} = useAppSelector((state: RootState) => state.category);
 
-  const isAdmin = true;
      const token = useAppSelector((state) => state.auth.token);
-      // const isAdmin = useMemo(() => isAdminUser(token), [token]);
+       const isAdmin = useMemo(() => isAdminUser(token), [token]);
   
     const {bgColor, textColor} = useTheme();
   const [filteredItems, setFilteredItems] = useState(categories);
@@ -49,6 +48,10 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
       dispatch(getCategories())
       },[dispatch])
 
+/*************  ✨ Codeium Command ⭐  *************/
+  /**
+
+/******  bb67db8a-380d-4c10-800a-081fca76ce74  *******/
   const addCategoryHandler = () => {
     setUpdatedCategory(null);
     setModalVisible(true);
@@ -67,7 +70,7 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
     // Add your update logic here
   };
 
-  const adminActions = (item: any) => ( isAdmin && (
+  const adminActions = (item: any) => ( isAdmin ? (
     <View className="flex flex-row items-center gap-2">
       <TouchableOpacity
         className="bg-green-700 px-4 py-1 rounded-lg"
@@ -82,7 +85,7 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
         <Text className="text-white">Delete</Text>
       </TouchableOpacity>
     </View>
-  ));
+  ): null);
 
   const handleModalClose = async (deleteConfirmed: boolean) => {
    
@@ -131,7 +134,7 @@ const {categories, loading, error} = useAppSelector((state: RootState) => state.
         contentContainerClassName="pb-24"
         data={filteredItems}
         renderItem={({ item, index }) => (
-          <CategoryCard item={item} adminActions={adminActions(item)} />
+          <CategoryCard key={index} item={item} adminActions={adminActions(item)} />
         )}
         keyExtractor={(item, index) => index.toString()}
         ListEmptyComponent={

@@ -3,13 +3,14 @@ import addressReducer from "../slices/addressSlice";
 import authReducer from "../slices/authSlice";
 import categoryReducer from "../slices/categorySlice";
 import orderReducer from "../slices/orderSlice";
-import productReducer from '../slices/productSlice'
+import productReducer from "../slices/productSlice";
+
 const appReducer = combineReducers({
   auth: authReducer,
   address: addressReducer,
   category: categoryReducer,  
   order: orderReducer,
-  products:productReducer
+  products: productReducer
 });
 
 // Allow state to be undefined in the reducer signature.

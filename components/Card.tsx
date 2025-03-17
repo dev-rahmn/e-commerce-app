@@ -1,15 +1,16 @@
 import icons from "@/constants/icons";
 import images from "@/constants/images";
+import { BASE_URL } from "@/utils/app.constent";
 import { Button, Image, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
   item?: any;
   onPress?: () => void;
-  adminActions?: JSX.Element;
+  adminActions?: JSX.Element | null;
 }
 interface CategoryProps {
   item?: any; // Include item properties
-  adminActions: JSX.Element; // Function to render admin actions based on id
+  adminActions: JSX.Element | null; // Function to render admin actions based on id
 }
 
 export const FeaturedCard = ({ item, onPress }: Props) => {
@@ -48,31 +49,36 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
             {/* ${item.price} */} $2500
           </Text>
           <Image source={icons.heart} className="size-5" />
-
         </View>
       </View>
     </TouchableOpacity>
   );
 };
 
-export  const Card = ({ item, onPress, adminActions }: Props) => {
+export const Card = ({ item, onPress, adminActions }: Props) => {
   return (
     <TouchableOpacity
-      className="flex-1 w-full mt-2 px-3 py-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
+      className="flex w-[45vw] mt-2 px-3 py-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
       onPress={onPress}
     >
       <View className="flex flex-row items-center absolute px-2 top-5 right-5 bg-white/90 p-1 rounded-full z-50">
-        <Image source={icons.star} className="size-2.5" />
+        <Image source={icons.star} className="size-2.5" tintColor="red" />
         <Text className="text-xs font-rubik-bold text-primary-300 ml-0.5">
-           4.8
+          4.8
         </Text>
       </View>
-
-      <Image source={images.home} className="w-full h-40 rounded-lg" />
+      {item.productImages.length > 0 ? (
+        <Image 
+        source={{ uri: `${BASE_URL}/${item.productImages[0]}` }} 
+          className="w-full h-40 rounded-lg"
+        />
+      ) : (
+        <Image source={images.home} className="w-full h-40 rounded-lg" />
+      )}
 
       <View className="flex flex-col mt-2">
         <Text className="text-base font-rubik-bold text-black-300">
-          {/* {item.name} */} Cozy Studio
+          {item.name}
         </Text>
         <Text className="text-xs font-rubik text-black-100">
           {/* {item.address} */} 22 W 33rd St, New York
@@ -80,14 +86,17 @@ export  const Card = ({ item, onPress, adminActions }: Props) => {
 
         <View className="flex flex-row items-center justify-between mt-2">
           <Text className="text-base font-rubik-bold text-primary-300">
-            {/* ${item.price} */} $2200
+            ₹{item.price}
           </Text>
-          {adminActions}
-          {!adminActions && <Image
-            source={icons.heart}
-            className="w-5 h-5 mr-2"
-            tintColor="#191D31"
-          />}
+          {adminActions ? (
+            adminActions
+          ) : (
+            <Image
+              source={icons.heart}
+              className="w-5 h-5 mr-2"
+              tintColor="#191D31"
+            />
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -100,8 +109,6 @@ export const OrderCard = ({ item, onPress }: Props) => {
       className="flex-1 w-full mt-2 px-4 py-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
       onPress={onPress}
     >
-
-
       <View className="flex flex-row items-center justify-between mt-2">
         {/* First View: Image */}
         <View className="flex flex-row items-center">
@@ -111,18 +118,25 @@ export const OrderCard = ({ item, onPress }: Props) => {
         {/* Second View: Name, Price, and Status */}
         <View className="flex-1 ml-3">
           <Text className="text-xl font-rubik-bold text-black-300">
-           {item.productName}
+            {item.productName}
           </Text>
           <Text className="text-xs font-rubik text-black-100">
-           Quantity : {item.quantity}
+            Quantity : {item.quantity}
           </Text>
           <View className="flex flex-row items-center justify-between mt-2">
             <Text className="text-base font-rubik-bold text-primary-300">
               ₹ {item.productPrice}
             </Text>
-            <Text className={`${item.status === "Delivered" ? "bg-green-700" : item.status === "Cancelled" ? "bg-red-700" : "bg-orange-700"}
+            <Text
+              className={`${
+                item.status === "Delivered"
+                  ? "bg-green-700"
+                  : item.status === "Cancelled"
+                  ? "bg-red-700"
+                  : "bg-orange-700"
+              }
              text-white text-xs px-3 py-1 rounded-lg font-rubik items-center justify-center`}
-             >
+            >
               {item.status}
             </Text>
           </View>
@@ -137,11 +151,9 @@ export const OrderCard = ({ item, onPress }: Props) => {
   );
 };
 
-export const CategoryCard = ({ item, adminActions  }: CategoryProps) => {
+export const CategoryCard = ({ item, adminActions }: CategoryProps) => {
   return (
-    <View
-      className="flex-1 w-full mt-2 px-4 py-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
-    >
+    <View className="flex-1 w-full mt-2 px-4 py-3 rounded-lg bg-white shadow-lg shadow-black-100/70 relative">
       <View className="flex flex-row items-center justify-between mt-2">
         {/* First View: Image */}
         <View className="flex flex-row items-center">
@@ -151,17 +163,14 @@ export const CategoryCard = ({ item, adminActions  }: CategoryProps) => {
         {/* Second View: Name, Price, and Status */}
         <View className="flex-1 ml-3">
           <Text className="text-xl font-rubik-bold text-black-300">
-           {item.name}
+            {item.name}
           </Text>
-          
-          <View className="flex flex-row items-center justify-end mt-2">
 
-           {/* Render adminActions here */}
-           {adminActions}
+          <View className="flex flex-row items-center justify-end mt-2">
+            {/* Render adminActions here */}
+            {adminActions}
           </View>
         </View>
-
-
       </View>
     </View>
   );

@@ -3,11 +3,11 @@ import { View, Text, Modal, TextInput, TouchableOpacity, Image, ScrollView, Flat
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import icons from '@/constants/icons';
-import { categories } from '@/constants/data';
+
 import images from '@/constants/images';
 import CustomInput from '@/components/CustomInput';
 
-const AddProductModal = ({ visible, onClose } : any) => {
+const AddProductModal = ({ visible, onClose, categories } : any) => {
   const [productName, setProductName] = useState('');
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
@@ -76,10 +76,10 @@ const AddProductModal = ({ visible, onClose } : any) => {
             <Picker
               selectedValue={category}
               onValueChange={(itemValue : any) => setCategory(itemValue)}
-              className="border border-gray-300 rounded-lg ">
+              className="border border-gray-300 rounded-lg bg-green-300">
               <Picker.Item label="Select Category" value={category} />
-              {categories.map((cat) => (
-                <Picker.Item key={cat.id} label={cat.name} value={cat.name} />
+              {[...categories].map((cat: any) => (
+                <Picker.Item key={cat.id} label={cat.name} value={cat.id} />
               ))}
             </Picker>
             </View>
