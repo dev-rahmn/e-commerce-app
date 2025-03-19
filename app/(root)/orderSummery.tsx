@@ -23,15 +23,6 @@ const OrderSummary = () => {
     if (quantity > 1) setQuantity((prev) => prev - 1);
   };
   
-  const handleQuantityChange = (text: string) => {
-    let num = text.replace(/[^0-9]/g, ''); // Allow only numbers
-    let parsedNum = num ? parseInt(num, 10) : 1; // Convert to integer
-    if (parsedNum > MAX_QUANTITY) parsedNum = MAX_QUANTITY; // Limit to max
-    if (parsedNum < 1) parsedNum = 1; // Prevent below 1
-    setQuantity(parsedNum);
-  };
-  
-
   interface Address {
     id: number;
     name: string;
@@ -110,6 +101,10 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
         setStep(1);
   }
  
+  const handlePaymentMethod = (method: string) => {
+    console.log("Selected Payment Method:", method)
+  }
+
   return (
     <SafeAreaView className=" h-full"   style={{ backgroundColor: bgColor }}>
       <View className="flex-1 ">
@@ -311,8 +306,8 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
           {step === 3 && (
             <View className="px-4">
               <Text className="text-xl mb-3 " style={{ color: textColor}}>Select Payment Method</Text>
-              {["Wallet UPI", "Net Banking", "Cash on Delivery"].map((method, index) => (
-                <TouchableOpacity key={index} className="p-4 border rounded-md mb-3"
+              {["Wallet UPI", "Net Banking", "Cash on Delivery","Credit/Debit Card",].map((method, index) => (
+                <TouchableOpacity key={index} className="p-4 border rounded-md mb-3" onPress={() => handlePaymentMethod(method)}
                 style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }} >
                   <Text className="text-black" style={{ color: textColor }}>{method}</Text>
                 </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
 import { useAppSelector } from '@/redux/store/hooks';
@@ -14,6 +14,18 @@ const ProfileDetails = () => {
     const rotate = useSharedValue(0);
     const scale = useSharedValue(1);
     const [flipped, setFlipped] = useState(false);
+
+
+       useEffect(() => {
+          const backAction = () => {
+            router.push("/profile"); // Navigate to the previous screen
+            return true; // Prevent default behavior (exiting the app)
+          };
+        
+          const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+        
+          return () => backHandler.remove(); // Cleanup the event listener
+        }, []);
 
     // Flip Animation - Rotates 360°
     const flipCard = () => {

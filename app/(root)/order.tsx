@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, FlatList, TouchableOpacity, Image, ActivityIndicator, BackHandler } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {Card, FeaturedCard, OrderCard} from '@/components/Card'
@@ -47,34 +47,24 @@ const Order = () => {
     }
   }, [dispatch, profile, data]);
 
+   useEffect(() => {
+      const backAction = () => {
+        router.push("/profile"); // Navigate to the previous screen
+        return true; // Prevent default behavior (exiting the app)
+      };
+    
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+    
+      return () => backHandler.remove(); // Cleanup the event listener
+    }, []);
+
       // Get the selected category from URL params
         const params = useLocalSearchParams();
         const selectedCategory = params.filter || 'All';  // Default to 'All' if not set
         const searchItem = params.query  // Default to 'All' if not set
 
-        useEffect(() => {
-          console.log('Selected category:', selectedCategory);
-        }, [selectedCategory]);
-
-        useEffect(() => {
-          console.log('searched Item:', searchItem);
-        }, [searchItem]);
         const {bgColor, textColor , theme} = useTheme()
-
-        // if (loading) {
-        //   return (
-        //     <SafeAreaView className='h-full '   style={{ backgroundColor: bgColor }}>
-        //       <ScrollView showsVerticalScrollIndicator={false}>
-        //         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
-                
-        //       <SkeletonOrderCard className={`rounded-lg p-4 m-2 shadow ${theme === 'dark' ? 'bg-gray-800' : 'bg-black-200 shadow-black-100/70'}`} key={index}/>
-        //       ))}
-        //       </ScrollView>
-              
-        //     </SafeAreaView>
-        //   );
-        // }
-             
+       
   
   return (
     <SafeAreaView className='h-full'   style={{ backgroundColor: bgColor }}>

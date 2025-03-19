@@ -20,6 +20,7 @@ import { useTheme } from "@/contaxtapis/ThemeContext";
 import { getProductDetail } from "@/redux/slices/productSlice";
 import { UIActivityIndicator } from "react-native-indicators";
 import { BASE_URL } from "@/utils/app.constent";
+import { BackHandler } from "react-native";
 
 const Property = () => {
   const dispatch = useAppDispatch();
@@ -34,6 +35,17 @@ const Property = () => {
   const { textColor, bgColor, theme } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  useEffect(() => {
+    const backAction = () => {
+      router.push("/product"); // Navigate to the previous screen
+      return true; // Prevent default behavior (exiting the app)
+    };
+  
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+  
+    return () => backHandler.remove(); // Cleanup the event listener
+  }, []);
+  
   // Keep all hooks before any conditional return
   const desTextColor = useMemo(() => (theme === "light" ? "text-black-100" : "text-gray-400"), [theme]);
   const normalTextColor = useMemo(() => (theme === "light" ? "text-black" : "text-white"), [theme]);

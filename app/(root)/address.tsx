@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, SafeAreaView, TouchableOpacity, Image, ScrollView, BackHandler } from 'react-native'
 import React, { useEffect } from 'react'
 import { router } from 'expo-router'
 import icons from '@/constants/icons'
@@ -18,6 +18,17 @@ const Address = () => {
                   dispatch(getAllAddresses(profile?.userId))  
               }
         },[dispatch, profile])
+
+           useEffect(() => {
+              const backAction = () => {
+                router.push("/profile"); // Navigate to the previous screen
+                return true; // Prevent default behavior (exiting the app)
+              };
+            
+              const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+            
+              return () => backHandler.remove(); // Cleanup the event listener
+            }, []);
   return (
     <SafeAreaView className="pb-10 h-full"
          style={{ backgroundColor: bgColor }}>
