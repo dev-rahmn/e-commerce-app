@@ -82,7 +82,7 @@ import { useTheme } from "@/contaxtapis/ThemeContext";
         <View className="flex flex-row justify-center mt-5">
           <View className="flex flex-col items-center relative mt-5">
             <Image
-              source={images.avatar}
+              source={images.profile}
               className="size-44 relative rounded-full"
             />
             <View className={`absolute top-[-15] right-[-20] px-4 py-2  rounded-lg ${isAdmin ? 'bg-white' : 'bg-green-300'}`}>

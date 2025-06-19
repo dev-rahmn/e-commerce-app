@@ -24,17 +24,26 @@ const initialState: AuthState = {
   error: null,
 };
 
+
+// Define the type for user data
+interface userData {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  type: string;
+}
+
+// Define the type for the API response
+interface SignupResponse {
+  message: string;
+}
+
 // Create an async thunk for logging in.
 export const loginUser = createAsyncThunk<
   // Return type of the payload creator (the fulfilled action)
-  {
-       token: string; user: UserProfile 
-},
-  // First argument to the payload creator (the credentials)
-  { email: string; password: string },
-  {
-    rejectValue: string;
-  }
+  { token: string; user: UserProfile },{ email: string; password: string },
+  {rejectValue: string;}
 >(
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
@@ -48,6 +57,19 @@ export const loginUser = createAsyncThunk<
     }
   }
 );
+// Create an async thunk for signing in.
+export const signinUser = createAsyncThunk<string, userData, {rejectValue: string;}>(
+  'auth/signinUser',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<SignupResponse>(`${BASE_URL}/user/signup`, userData);
+      return response?.data?.message;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message);
+    }
+  }
+);
+
 
 const authSlice = createSlice({
   name: 'auth',

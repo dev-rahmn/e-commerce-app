@@ -3,18 +3,38 @@ import images from "@/constants/images";
 import { useAppDispatch, useAppSelector } from "@/redux/store/hooks";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, FlatList, Image, SafeAreaView, ScrollView, Animated } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, SafeAreaView, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
 import ManageAddress from "./manageAddress";
 import { useTheme } from "@/contaxtapis/ThemeContext";
 import { BASE_URL } from "@/utils/app.constent";
-import { Picker } from "@react-native-picker/picker";
 
 const OrderSummary = () => {
 
   const [step, setStep] = useState(1); // Track current step
   const [quantity, setQuantity] = useState(1); // Default quantity
+  const [modalVisible, setModalVisible] = useState(false);
+  const [captcha, setCaptcha] = useState("");
+  const [userInput, setUserInput] = useState("");
+  const [invalidCaptcha, setInvalidCaptcha] = useState(false);
   const MAX_QUANTITY = 6; // Maximum allowed quantity
+   
+  const { data: selectedDeliveryAddress, loading: addressLoading, error: addressError } = useAppSelector(
+    state => state.address.selectedDeliveryAddress
+  );
   
+  const productDetail = useAppSelector(state => state.products.productDetail);
+  const { data: productData, loading: productLoading, error: productError } = productDetail;
+  
+  const profile = useAppSelector((state) => state.auth.userProfile);
+
+  const productDetailInfo = useMemo(() => {
+    return productData?.product;
+  }, [productData?.product]);
+    // Generate a simple CAPTCHA (Random 4-digit number)
+    const generateCaptcha = () => {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    };
+
   const increaseQuantity = () => {
     if (quantity < MAX_QUANTITY) setQuantity((prev) => prev + 1);
   };
@@ -34,19 +54,7 @@ const OrderSummary = () => {
     roadName: string;
     type: string; // Use enum here
   }
- 
-  const { data: selectedDeliveryAddress, loading: addressLoading, error: addressError } = useAppSelector(
-    state => state.address.selectedDeliveryAddress
-  );
-  
-  const productDetail = useAppSelector(state => state.products.productDetail);
-  const { data: productData, loading: productLoading, error: productError } = productDetail;
-  
-  const profile = useAppSelector((state) => state.auth.userProfile);
 
-  const productDetailInfo = useMemo(() => {
-    return productData?.product;
-  }, [productData?.product]);
   
 // ✅ Ensure values exist before calculation
 const basePrice = productDetailInfo?.price || 0; // Selling price
@@ -95,6 +103,7 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
     };
 
     console.log('place order',orderData);
+  
   }
 
   const handleAddressChange = () => {
@@ -102,12 +111,35 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
   }
  
   const handlePaymentMethod = (method: string) => {
-    console.log("Selected Payment Method:", method)
+    if (method === "Cash on Delivery") {
+      setCaptcha(generateCaptcha()); // Generate a new CAPTCHA
+      setModalVisible(true); // Open the modal
+
+    }else{
+      // Handle online payment
+      console.log("Selected Payment Method: Online Payment");
+      console.log('testing for online payment')
+    }
   }
 
+   // Handle CAPTCHA verification
+   const verifyCaptcha = () => {
+    if (userInput === captcha) {
+      setModalVisible(false);
+      setInvalidCaptcha(false);
+      console.log("CAPTCHA verified. Proceed with Cash on Delivery.");
+    } else {
+      setInvalidCaptcha(true);
+    }
+  };
+
+
   return (
+    <View>
+
     <SafeAreaView className=" h-full"   style={{ backgroundColor: bgColor }}>
-      <View className="flex-1 ">
+      <View className="flex-1 mt-5">
+        
         
         {step === 1 && (<View className="flex flex-row mt-2 items-center gap-4 mx-4 pb-2">
             <TouchableOpacity onPress={() => {setStep(2)}} className=" h-10 w-10 rounded-full flex items-center justify-center"
@@ -127,14 +159,14 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
         </View>)}
         {step === 3 && (<View className="flex flex-row mt-2 items-center gap-4 mx-4 pb-2">
             <TouchableOpacity onPress={() => setStep(2)} className=" h-10 w-10 rounded-full flex items-center justify-center"
-            style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }}
+            style={{ backgroundColor: bgColor }}
               >
               <Image tintColor={textColor} source={icons.backArrow} className="size-6" />
             </TouchableOpacity>
             <Text className={`text-xl font-rubik-base  mt-2 text-${textColor}`}>Payment</Text>  
         </View>)}
 
-        {/* Step Indicator */}
+       
         <View className="w-full flex-row items-center justify-between mb-2">
           {steps.map((item, index) => {
             const isCompleted = step > index + 1;
@@ -161,10 +193,9 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
             );
           })}
         </View>
-        {/* wrap the all component all three steps in this div */} 
-
+        
         <View >   
-          {/* Step 1: Address Input */}
+          
           {step === 1 && (
            <View className="pb-24">
              <View>
@@ -173,7 +204,7 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
           </View>
           )}
             
-          {/* Step 2: Order Summary */}
+        
             {step === 2 && (
             <ScrollView 
                 className=" px-2"  style={{ backgroundColor: bgColor }}  
@@ -305,9 +336,38 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
           {/* Step 3: Payment Options */}
           {step === 3 && (
             <View className="px-4">
+              {/* CAPTCHA Modal */}
+                  <Modal visible={modalVisible} transparent animationType="fade">
+                    <View className="flex-1 justify-center items-center bg-black/50 bg-opacity-50">
+                      <View className="bg-white w-[90%] p-5 rounded-lg shadow-lg relative">
+                      <TouchableOpacity className="absolute right-[-5] top-[-10] px-2 py-1 bg-gray-500 rounded-lg" onPress={() => {setModalVisible(false), setInvalidCaptcha(false)}}>
+                       <Text className="text-red-500">X</Text> 
+                      </TouchableOpacity>
+                        <Text className="text-xl font-bold mb-2 text-center">Enter The Captcha Code</Text>
+                      {invalidCaptcha && (
+                        
+                        <Text className="text-sm font-rubik mb-2 text-center text-red-500">Please enter the correct code</Text>
+                      )}
+                        <Text className="text-2xl font-semibold text-center bg-gray-200 p-3 rounded-lg mb-4">
+                          {captcha}
+                        </Text>
+                        <TextInput
+                          placeholder="Enter CAPTCHA CODE" 
+                          className="border border-gray-300 p-3 rounded-lg text-center mb-4"
+                          onChangeText={setUserInput}
+                          keyboardType="numeric"
+                        />
+                        <TouchableOpacity
+                          onPress={verifyCaptcha}
+                          className="bg-blue-500 py-3 rounded-lg">
+                          <Text className="text-white text-center font-bold">Place order</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </Modal>
               <Text className="text-xl mb-3 " style={{ color: textColor}}>Select Payment Method</Text>
-              {["Wallet UPI", "Net Banking", "Cash on Delivery","Credit/Debit Card",].map((method, index) => (
-                <TouchableOpacity key={index} className="p-4 border rounded-md mb-3" onPress={() => handlePaymentMethod(method)}
+              {["Cash on Delivery","Online Payment",].map((method, index) => (
+                <TouchableOpacity key={index} className="p-4 border rounded-lg mb-3" onPress={() => handlePaymentMethod(method)}
                 style={{ borderColor: textColor, borderWidth: 1, backgroundColor: bgColor }} >
                   <Text className="text-black" style={{ color: textColor }}>{method}</Text>
                 </TouchableOpacity>
@@ -315,14 +375,17 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
             </View>
           )}
 
+
         </View>
+
+        
       </View>
 
       {/* Back and Next Buttons */}
       {(step == 2 || step == 3 ) && (
         <View className="absolute bottom-0 left-0 right-0 p-2 gap-4 flex flex-row justify-between border-t border-gray-300"  style={{ backgroundColor: bgColor }}>
         {step > 2 && (
-          <TouchableOpacity className="bg-primary-300 py-3 px-6 rounded-full flex-1 " onPress={handlePrevStep}>
+          <TouchableOpacity className="bg-primary-300 py-3 px-6 rounded-full flex " onPress={handlePrevStep}>
             <Text className="text-white text-center">Back</Text>
           </TouchableOpacity>
         )}
@@ -332,16 +395,13 @@ const totalAmount = Math.max(((basePrice - couponDiscount + deliveryCharges) * q
           <Text className="text-white text-center"> CONTINUE</Text>
         </TouchableOpacity>
         )}
-        {step === 3 && (
-        <TouchableOpacity className="bg-green-500 py-3 px-6 rounded-full flex-1" onPress={placeOrderHandler}>
-          <Text className="text-white text-center">PLACE ORDER</Text>
-        </TouchableOpacity>
-        )}
-        
+       
       </View>
       )}
       
     </SafeAreaView>
+
+    </View>
   );
 };
 
