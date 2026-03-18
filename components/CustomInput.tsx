@@ -9,11 +9,11 @@ interface CustomInputProps extends TextInputProps {
   required?: boolean;
 }
 
-const CustomInput = ({ label, labelColor, error,required, ...props }: CustomInputProps) => {
+const CustomInput = ({ label, labelColor, error, required, ...props }: CustomInputProps) => {
 
   return (
     <View className="mb-4">
-      { label && <Text className={`${labelColor ? `text-${labelColor}` : 'text-white'} font-rubik-medium mb-2`}>{label} {required &&
+      { label && <Text className={`${labelColor ? `text-${labelColor}` : 'text-black'} font-rubik-medium mb-2`}>{label} {required &&
       <Text className="text-red-500">*</Text>
        }</Text>}
       <TextInput 

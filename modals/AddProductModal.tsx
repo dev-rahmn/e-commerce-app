@@ -64,20 +64,20 @@ const AddProductModal = ({ visible, onClose, categories } : any) => {
         </View>
 
             <CustomInput
-            label='Name'
-              className="border border-gray-300 rounded-lg p-2 mb-3"
+              label='Name'
+              className="border border-gray-300 rounded-lg p-2 mb-1"
               placeholder="Enter product name"
               value={productName}
               onChangeText={setProductName}
             />
 
             <Text className="text-black font-rubik-medium ">Category</Text>
-            <View  className="border border-gray-300 rounded-lg mb-3 mt-2">
+            <View  className="border border-gray-300 rounded-lg mb-1">
             <Picker
               selectedValue={category}
               onValueChange={(itemValue : any) => setCategory(itemValue)}
-              className="border border-gray-300 rounded-lg bg-green-300">
-              <Picker.Item label="Select Category" value={category} />
+              className="border border-gray-300 rounded-lg bg-green-300 py-2">
+              <Picker.Item label="Select Category" value={category} color='black'/>
               {[...categories].map((cat: any) => (
                 <Picker.Item key={cat.id} label={cat.name} value={cat.id} />
               ))}
@@ -86,8 +86,8 @@ const AddProductModal = ({ visible, onClose, categories } : any) => {
             
 
             <CustomInput
-            label='Price'
-              className="border border-gray-300 rounded-lg p-2 mb-3"
+              label='Price'
+              className="border border-gray-300 rounded-lg mb-1"
               placeholder="Enter price"
               keyboardType="numeric"
               value={price}
@@ -97,7 +97,7 @@ const AddProductModal = ({ visible, onClose, categories } : any) => {
             
             <CustomInput
             label='Description'
-              className="border border-gray-300 rounded-lg p-2 mb-3"
+              className="border border-gray-300 rounded-lg mb-1"
               placeholder="Enter description"
               multiline
               numberOfLines={4}

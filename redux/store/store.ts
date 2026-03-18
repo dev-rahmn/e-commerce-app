@@ -1,14 +1,24 @@
-// store.ts
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import rootReducer from '../reducers/rootReducer';
 
-// Persist configuration: only persist the auth slice.
+// Fix for web (AsyncStorage not available on server)
+const storage =
+  Platform.OS === 'web'
+    ? {
+        getItem: async () => null,
+        setItem: async () => {},
+        removeItem: async () => {},
+      }
+    : AsyncStorage;
+
+// Persist configuration
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage,
-   whitelist: ['auth','address'],
+  storage,
+  whitelist: ['auth', 'address'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -17,16 +27,11 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      // Disable serializable checks for redux-persist actions.
       serializableCheck: false,
     }),
 });
 
-// Create the persistor which will be used in PersistGate.
 export const persistor = persistStore(store);
 
-// Export types for usage with TypeScript (optional)
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-

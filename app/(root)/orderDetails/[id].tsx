@@ -24,7 +24,7 @@ const getTrackingSteps = (currentStatus: string) => {
 // Create an Animated component that supports Tailwind's className
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-const OrderDetails = () => {
+export default function OrderDetails  () {
   const [expanded, setExpanded] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
   const [contentHeight, setContentHeight] = useState(0);
@@ -275,4 +275,4 @@ const statusFlag = useMemo(() => data?.statusFlag ?? null, [data]);
   );
 };
 
-export default OrderDetails;
+ 

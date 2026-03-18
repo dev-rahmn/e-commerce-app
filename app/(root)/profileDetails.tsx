@@ -7,7 +7,7 @@ import { useTheme } from '@/contaxtapis/ThemeContext';
 import { router } from 'expo-router';
 import icons from '@/constants/icons';
 
-const ProfileDetails = () => {
+export default function ProfileDetails ()  {
     const { bgColor, textColor,theme } = useTheme();
     const profile = useAppSelector((state) => state.auth.userProfile);
 
@@ -93,4 +93,4 @@ const ProfileDetails = () => {
     );
 };
 
-export default ProfileDetails;
+

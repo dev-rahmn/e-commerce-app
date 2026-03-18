@@ -17,7 +17,7 @@ import { useTheme } from '@/contaxtapis/ThemeContext'
 import SkeletonLoader from '@/components/CustomSkeleton'
 import { SkeletonOrderCard } from '@/skeletons'
 
-const Order = () => {
+export default function Order () {
     const dispatch =  useAppDispatch()
     const profile = useAppSelector((state) => state.auth.userProfile);
     const [refreshing, setRefreshing] = useState(false);
@@ -116,4 +116,3 @@ const Order = () => {
   )
 }
 
-export default Order

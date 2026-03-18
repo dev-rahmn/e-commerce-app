@@ -49,14 +49,14 @@ const { bgColor, textColor, theme} = useTheme()
   }, [focused]);
 
   return (
-    <View className="flex-1 mt-3 flex flex-col items-center">
+    <View className="flex-1 mt-1 flex flex-col items-center">
       <Animated.Image
         source={icon}
         tintColor={focused ?  theme === "light" ? "#0061FF" :"#0aa205" : `${textColor}`}
         resizeMode="contain"
         style={{
-          width: 24,
-          height: 24,
+          width: 18,
+          height: 18,
           transform: [{ scale: scaleAnim }],
         }}
       />
